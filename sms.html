@@ -306,28 +306,26 @@
   window.setMsg = setMsg;
 </script>
 <script>
+ <script>
   const p = new URLSearchParams(location.search);
 
-  const name = p.get('name') || '';
-  const to   = p.get('to') || '';
-  const from = p.get('from') || '';
-  const sid  = p.get('sid') || '';
-  const sid  = p.get('carrier') || '';
+  const name    = p.get('name') || '';
+  const to      = p.get('to') || '';
+  const from    = p.get('from') || '';
+  const sid     = p.get('sid') || '';
+  const carrier = p.get('carrier') || '';
+  const msg     = p.get('msg') || '';
 
-  const msg = p.get('msg') || '';
-  if (msg) document.getElementById('lastMsg').textContent = msg;
-
-
-  // Set UI
   document.title = `Messages – ${name || to || 'Unknown'}`;
   document.getElementById('contactName').textContent = name || to || 'Unknown';
-  document.getElementById('contactTo').textContent = to ? to : '';
+  document.getElementById('contactTo').textContent = to;
 
-  // Set hidden fields used by your Make webhook
+  if (msg) document.getElementById('lastMsg').textContent = msg;
+
   document.getElementById('toInput').value = to;
   document.getElementById('fromInput').value = from;
   document.getElementById('sidInput').value = sid;
-  document.getElementById('sidInput').value = carrier;
-</script>  
+  document.getElementById('carrierInput').value = carrier;
+</script>
 </body>
 </html>
