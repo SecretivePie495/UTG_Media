@@ -269,7 +269,7 @@
       <input type="hidden" name="to" id="toInput">
       <input type="hidden" name="from" id="fromInput">
       <input type="hidden" name="sid" id="sidInput">
-
+      <input type="hidden" name="carrier" id="sidInput">
 
       <div class="input">
         <textarea name="body" rows="1" placeholder="iMessage…"></textarea>
@@ -312,6 +312,7 @@
   const to   = p.get('to') || '';
   const from = p.get('from') || '';
   const sid  = p.get('sid') || '';
+  const sid  = p.get('carrier') || '';
 
   const msg = p.get('msg') || '';
   if (msg) document.getElementById('lastMsg').textContent = msg;
@@ -326,6 +327,7 @@
   document.getElementById('toInput').value = to;
   document.getElementById('fromInput').value = from;
   document.getElementById('sidInput').value = sid;
+  document.getElementById('sidInput').value = carrier;
 </script>  
 </body>
 </html>
