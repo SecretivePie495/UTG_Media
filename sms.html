@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-<title>Messages – {{name}}</title>
+<title>Messages</title>
 
 <style>
   :root{
@@ -243,8 +243,8 @@
       <div class="header-inner">
         <div class="avatar"></div>
         <div class="title">
-      <strong>{{name}}</strong>
-      <span>{{to}}</span>
+      <strong id="contactName">Loading…</strong>
+      <span id="contactTo"></span>
       </div>
       </div>
     </div>
@@ -254,7 +254,7 @@
 
       <!-- Last inbound message (customer) -->
       <div class="row in">
-        <div class="bubble in">{{last_message}}</div>
+        <div class="bubble in" id="lastMsg">…</div>
       </div>
 
       <!-- Optional: show a “you’re replying as” bubble -->
@@ -266,9 +266,10 @@
 
   <form class="composer safe-bottom" method="POST" action="https://hook.us1.make.com/9bd7p4t1l3mbq8qr7uqx2c28g3whgbu3">
     <div class="composer-inner">
-      <input type="hidden" name="to" value="{{to}}">
-      <input type="hidden" name="from" value="{{from}}">
-      <input type="hidden" name="sid" value="{{sid}}">
+      <input type="hidden" name="to" id="toInput">
+      <input type="hidden" name="from" id="fromInput">
+      <input type="hidden" name="sid" id="sidInput">
+
 
       <div class="input">
         <textarea name="body" rows="1" placeholder="iMessage…"></textarea>
@@ -304,5 +305,27 @@
   }
   window.setMsg = setMsg;
 </script>
+<script>
+  const p = new URLSearchParams(location.search);
+
+  const name = p.get('name') || '';
+  const to   = p.get('to') || '';
+  const from = p.get('from') || '';
+  const sid  = p.get('sid') || '';
+
+  const msg = p.get('msg') || '';
+  if (msg) document.getElementById('lastMsg').textContent = msg;
+
+
+  // Set UI
+  document.title = `Messages – ${name || to || 'Unknown'}`;
+  document.getElementById('contactName').textContent = name || to || 'Unknown';
+  document.getElementById('contactTo').textContent = to ? to : '';
+
+  // Set hidden fields used by your Make webhook
+  document.getElementById('toInput').value = to;
+  document.getElementById('fromInput').value = from;
+  document.getElementById('sidInput').value = sid;
+</script>  
 </body>
 </html>
