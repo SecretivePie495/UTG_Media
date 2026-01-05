@@ -559,6 +559,90 @@ https://perspective.imgix.net/678f6b7b29cb47003b8c73f4.png?auto=format%2Ccompres
 })();
 </script>
 
+      <style>
+  browserflow-container,
+  browserflow-container * {
+    pointer-events: none !important;
+  }
+</style>
+
+      <script>
+(function () {
+  function isActuallyCheckbox(el) {
+    return el && el.matches && el.matches('input[type="checkbox"]');
+  }
+
+  // Toggle a checkbox safely
+  function toggle(cb) {
+    if (!isActuallyCheckbox(cb)) return;
+
+    // If it's disabled, enable it (builders sometimes disable until something loads)
+    if (cb.disabled) cb.disabled = false;
+
+    cb.checked = !cb.checked;
+
+    // Trigger events that form libraries listen for
+    cb.dispatchEvent(new Event("input", { bubbles: true }));
+    cb.dispatchEvent(new Event("change", { bubbles: true }));
+  }
+
+  // 1) Fix ids/labels and remove disabling styles
+  function normalize() {
+    document.querySelectorAll('input[type="checkbox"]').forEach((cb, i) => {
+      if (!cb.id) cb.id = `cb_${i}_${Math.random().toString(16).slice(2)}`;
+
+      cb.style.pointerEvents = "auto";
+      cb.style.opacity = cb.style.opacity || "1";
+
+      // Try to connect a nearby label if needed
+      const label = cb.closest("label") || cb.parentElement?.querySelector("label");
+      if (label) {
+        label.style.pointerEvents = "auto";
+        if (label.tagName === "LABEL" && !label.getAttribute("for") && !cb.closest("label")) {
+          label.setAttribute("for", cb.id);
+        }
+      }
+    });
+  }
+
+  // 2) Capture clicks anywhere and toggle if click is on label/checkbox area
+  document.addEventListener("click", function (e) {
+    // If they clicked the input itself
+    if (isActuallyCheckbox(e.target)) return; // default should work
+
+    // If they clicked a label (or inside one)
+    const label = e.target.closest("label");
+    if (label) {
+      const cb =
+        document.getElementById(label.getAttribute("for")) ||
+        label.querySelector('input[type="checkbox"]');
+      if (cb) {
+        e.preventDefault();
+        e.stopPropagation();
+        toggle(cb);
+        return;
+      }
+    }
+
+    // If they clicked an element near a checkbox (common with custom layouts)
+    const near = e.target.closest('[data-checkbox], .checkbox, .check, .consent, .terms, .w-checkbox');
+    if (near) {
+      const cb = near.querySelector('input[type="checkbox"]');
+      if (cb) {
+        e.preventDefault();
+        e.stopPropagation();
+        toggle(cb);
+      }
+    }
+  }, true); // <-- capture phase
+
+  normalize();
+
+  // Keep normalizing if the builder re-renders DOM
+  new MutationObserver(normalize).observe(document.documentElement, { childList: true, subtree: true });
+})();
+</script>
+
 </body>
 <browserflow-container></browserflow-container>
 </html>
