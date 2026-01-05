@@ -513,6 +513,51 @@ https://perspective.imgix.net/678f6b7b29cb47003b8c73f4.png?auto=format%2Ccompres
     });
   })();
 </script>
+<script>
+(function () {
+  function wireCheckboxes(root = document) {
+    const inputs = root.querySelectorAll('input[type="checkbox"]');
+
+    inputs.forEach((cb, i) => {
+      // Ensure the checkbox has an id
+      if (!cb.id) cb.id = `cb_${i}_${Math.random().toString(16).slice(2)}`;
+
+      // If there's a label next to it, ensure it's clickable
+      const label =
+        root.querySelector(`label[for="${cb.id}"]`) ||
+        cb.closest('label') ||
+        cb.parentElement?.querySelector('label');
+
+      if (label) {
+        label.style.pointerEvents = "auto";
+        cb.style.pointerEvents = "auto";
+
+        // If label isn't linked via "for", link it
+        if (label.tagName === "LABEL" && !label.getAttribute("for") && !cb.closest('label')) {
+          label.setAttribute("for", cb.id);
+        }
+
+        // Fallback: clicking label toggles checkbox
+        label.addEventListener("click", (e) => {
+          // only if click didn't originate on the input itself
+          if (e.target !== cb) {
+            e.preventDefault();
+            cb.checked = !cb.checked;
+            cb.dispatchEvent(new Event("change", { bubbles: true }));
+          }
+        }, { passive: false });
+      }
+    });
+  }
+
+  // Run now
+  wireCheckboxes();
+
+  // If the page is re-rendering (Perspective / dynamic), keep re-wiring
+  const obs = new MutationObserver(() => wireCheckboxes());
+  obs.observe(document.documentElement, { childList: true, subtree: true });
+})();
+</script>
 
 </body>
 <browserflow-container></browserflow-container>
