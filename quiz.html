@@ -1,16 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Creator Split Onboarding</title>
 
-    <iframe
-      id="JotFormIFrame-252226333356150"
-      title="Creator Split Onboarding"
-      onload="window.parent.scrollTo(0,0)"
-      allowtransparency="true"
-      allow="geolocation; microphone; camera; fullscreen; payment"
-      src="https://form.jotform.com/252226333356150"
-      frameborder="0"
-      style="min-width:100%;max-width:100%;height:539px;border:none;"
-      scrolling="no"
-    >
-    </iframe>
-    <script src='https://cdn.jotfor.ms/s/umd/latest/for-form-embed-handler.js'></script>
-    <script>window.jotformEmbedHandler("iframe[id='JotFormIFrame-252226333356150']", "https://form.jotform.com/")</script>
-    
+  <!-- Mobile-friendly -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Remove any default spacing -->
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    iframe {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+  </style>
+</head>
+
+<body>
+
+  <iframe
+    id="JotFormIFrame-252226333356150"
+    title="Creator Split Onboarding"
+    allow="geolocation; microphone; camera; fullscreen; payment"
+    src="https://form.jotform.com/252226333356150"
+    scrolling="no"
+  ></iframe>
+
+  <!-- Jotform auto-resize + embed handler -->
+  <script src="https://cdn.jotfor.ms/s/umd/latest/for-form-embed-handler.js"></script>
+  <script>
+    window.jotformEmbedHandler(
+      "iframe[id='JotFormIFrame-252226333356150']",
+      "https://form.jotform.com/"
+    );
+  </script>
+
+</body>
+</html>
