@@ -538,5 +538,37 @@
       playBtn.style.display = 'none';
     });
   </script>
+<script>
+  document.getElementById("demoForm").addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const form = e.target;
+    const formData = new FormData(form);
+
+    const payload = {
+      name: formData.get("name"),
+      email: formData.get("email"),
+      page: window.location.href,
+      timestamp: new Date().toISOString()
+    };
+
+    try {
+      await fetch("https://hook.us1.make.com/hif1y4tjjturtyth2q1j87phccnnuvne", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+      });
+
+      // redirect after successful POST
+      window.location.href = "https://utgmedia.com/lead";
+
+    } catch (err) {
+      alert("Submission failed. Please try again.");
+      console.error(err);
+    }
+  });
+</script>
 </body>
 </html>
