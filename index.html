@@ -472,7 +472,110 @@ https://perspective.imgix.net/67a079244b4b4b003b5358ce.png?auto=format%2Ccompres
             animation-timing-function: cubic-bezier(0, 0, 1, 1);
         }
     </style><title>Group</title><desc>Created with Sketch.</desc><g id="el_IIytet5NQt" fill-rule="evenodd"><g id="el_UbH5tdyPMI"><g id="el_jRFP1iZ8mU_an_DgJ-5qTdj" data-animator-group="true" data-animator-type="0"><g id="el_jRFP1iZ8mU_an_-l8DO8tko" data-animator-group="true" data-animator-type="2"><path d="M3.8475,17.4245232 C1.53,15.3885559 0,14.0457766 0,12.3978202 C0,11.0550409 1.089,10 2.475,10 C3.258,10 4.0095,10.3531335 4.5,10.9111717 C4.9905,10.3531335 5.742,10 6.525,10 C7.911,10 9,11.0550409 9,12.3978202 C9,14.0457766 7.47,15.3885559 5.1525,17.4288828 L4.5,18 L3.8475,17.4245232 Z" id="el_jRFP1iZ8mU"></path></g></g><g id="el_7PCBmmds0c_an_p3yGQ4dJWc" data-animator-group="true" data-animator-type="0"><g id="el_7PCBmmds0c_an_0wJgoJVV-" data-animator-group="true" data-animator-type="2"><path d="M14.885625,10.5683924 C13.1475,9.04141689 12,8.03433243 12,6.79836512 C12,5.79128065 12.81675,5 13.85625,5 C14.4435,5 15.007125,5.26485014 15.375,5.68337875 C15.742875,5.26485014 16.3065,5 16.89375,5 C17.93325,5 18.75,5.79128065 18.75,6.79836512 C18.75,8.03433243 17.6025,9.04141689 15.864375,10.5716621 L15.375,11 L14.885625,10.5683924 Z" id="el_7PCBmmds0c"></path></g></g><g id="el_bOn6_Lkvw0_an_NB5bG0XGUT" data-animator-group="true" data-animator-type="0"><g id="el_bOn6_Lkvw0_an_rE0dVlV53" data-animator-group="true" data-animator-type="2"><path d="M4.92375,3.71226158 C3.765,2.69427793 3,2.02288828 3,1.19891008 C3,0.527520436 3.5445,0 4.2375,0 C4.629,0 5.00475,0.176566757 5.25,0.455585831 C5.49525,0.176566757 5.871,0 6.2625,0 C6.9555,0 7.5,0.527520436 7.5,1.19891008 C7.5,2.02288828 6.735,2.69427793 5.57625,3.71444142 L5.25,4 L4.92375,3.71226158 Z" id="el_bOn6_Lkvw0"></path></g></g></g></g></svg> <img src="https://github.com/SecretivePie495/UTG_Media/blob/main/images/Favicon.jpg?raw=true" alt="logo" class="fun-mr-3 fun-w-5"> <span class="fun-text-black/60">We use Perspective</span></a></div></div></div> </div></div></div>  </main>   <div id="svelte-announcer" aria-live="assertive" aria-atomic="true" style="position: absolute; left: 0px; top: 0px; clip: rect(0px, 0px, 0px, 0px); clip-path: inset(50%); overflow: hidden; white-space: nowrap; width: 1px; height: 1px;"></div></div>
-    
+
+		<style>
+  .fun-absolute.fun-bottom-4.fun-z-10 {
+    display: none !important;
+  }
+</style>
+
+		<!-- VIDEO BLOCK -->
+<div class="video-wrap">
+  <div class="video-shell">
+    <video
+      id="introVideo"
+      playsinline
+      preload="metadata"
+      style="width:100%; height:100%; object-fit:cover; display:block;"
+    >
+      <source
+        src="https://storage.googleapis.com/media.utg-media.com/Introduction.mp4"
+        type="video/mp4"
+      />
+      Your browser does not support the video tag.
+    </video>
+
+    <!-- PLAY BUTTON OVERLAY -->
+    <button id="playBtn" aria-label="Play video" class="play-btn">
+      <span class="play-icon"></span>
+    </button>
+  </div>
+</div>
+
+<style>
+  .video-wrap{
+    max-width: 900px;
+    margin: 24px auto;
+    padding: 0 16px; /* key for mobile */
+  }
+
+  .video-shell{
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9; /* key */
+    border-radius: 16px;
+    overflow: hidden;
+    background:#000;
+  }
+
+  .play-btn{
+    position:absolute;
+    inset:0;
+    margin:auto;
+    width:72px;
+    height:72px;
+    border-radius:999px;
+    border:none;
+    background:rgba(0,0,0,.55);
+    display:grid;
+    place-items:center;
+    cursor:pointer;
+    backdrop-filter: blur(6px);
+  }
+
+  .play-icon{
+    display:block;
+    width:0;
+    height:0;
+    border-left:22px solid white;
+    border-top:13px solid transparent;
+    border-bottom:13px solid transparent;
+    transform: translateX(2px);
+  }
+
+  /* Smaller phones */
+  @media (max-width: 420px){
+    .video-wrap{ margin: 18px auto; padding: 0 12px; }
+    .video-shell{ border-radius: 14px; }
+    .play-btn{ width:60px; height:60px; }
+    .play-icon{
+      border-left-width: 18px;
+      border-top-width: 11px;
+      border-bottom-width: 11px;
+    }
+  }
+</style>
+
+<script>
+  (function(){
+    const video = document.getElementById("introVideo");
+    const btn = document.getElementById("playBtn");
+    if(!video || !btn) return;
+
+    btn.addEventListener("click", () => {
+      // show native controls once user interacts (mobile-friendly)
+      video.controls = true;
+      video.muted = false;
+      video.play();
+      btn.style.display = "none";
+    });
+
+    video.addEventListener("pause", () => {
+      // optional: bring button back if paused
+      // btn.style.display = "grid";
+    });
+  })();
+</script>
 
 </body>
 <browserflow-container></browserflow-container>
