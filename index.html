@@ -257,7 +257,6 @@ src="https://www.facebook.com/tr?id=689091889996583&ev=PageView&noscript=1"
       <script src="https://assets.calendly.com/assets/external/widget.js" async></script>
 
       <div class="features">
-<!-- LEFT CARD: FORM (Premium / Gold / Professional) -->
 <div class="feature-card" style="
   background:#ffffff;
   border:1.5px solid #d4af37;
@@ -298,12 +297,7 @@ src="https://www.facebook.com/tr?id=689091889996583&ev=PageView&noscript=1"
     <div style="display:flex; gap:12px; margin-bottom:14px; flex-wrap:wrap;">
       <div style="flex:1; min-width:180px;">
         <label style="display:block; font-size:13px; color:#333; margin-bottom:6px; font-weight:600;">First name</label>
-        <input
-          type="text"
-          name="first_name"
-          required
-          autocomplete="given-name"
-          style="
+        <input type="text" name="first_name" required autocomplete="given-name" style="
             width:100%;
             padding:13px 14px;
             border-radius:12px;
@@ -311,19 +305,12 @@ src="https://www.facebook.com/tr?id=689091889996583&ev=PageView&noscript=1"
             font-size:15.5px;
             background:#fff;
             outline:none;
-          "
-          placeholder="John"
-        />
+          " placeholder="John">
       </div>
 
       <div style="flex:1; min-width:180px;">
         <label style="display:block; font-size:13px; color:#333; margin-bottom:6px; font-weight:600;">Last name</label>
-        <input
-          type="text"
-          name="last_name"
-          required
-          autocomplete="family-name"
-          style="
+        <input type="text" name="last_name" required autocomplete="family-name" style="
             width:100%;
             padding:13px 14px;
             border-radius:12px;
@@ -331,21 +318,28 @@ src="https://www.facebook.com/tr?id=689091889996583&ev=PageView&noscript=1"
             font-size:15.5px;
             background:#fff;
             outline:none;
-          "
-          placeholder="Smith"
-        />
+          " placeholder="Smith">
       </div>
+    </div>
+
+    <!-- Business Name (NEW) -->
+    <div style="margin-bottom:14px;">
+      <label style="display:block; font-size:13px; color:#333; margin-bottom:6px; font-weight:600;">Business name</label>
+      <input type="text" name="business_name" autocomplete="organization" style="
+          width:100%;
+          padding:13px 14px;
+          border-radius:12px;
+          border:1px solid #d7d7d7;
+          font-size:15.5px;
+          background:#fff;
+          outline:none;
+        " placeholder="Acme Pickleball Club">
     </div>
 
     <!-- Email -->
     <div style="margin-bottom:14px;">
       <label style="display:block; font-size:13px; color:#333; margin-bottom:6px; font-weight:600;">Email</label>
-      <input
-        type="email"
-        name="email"
-        required
-        autocomplete="email"
-        style="
+      <input type="email" name="email" required autocomplete="email" style="
           width:100%;
           padding:13px 14px;
           border-radius:12px;
@@ -353,20 +347,13 @@ src="https://www.facebook.com/tr?id=689091889996583&ev=PageView&noscript=1"
           font-size:15.5px;
           background:#fff;
           outline:none;
-        "
-        placeholder="you@company.com"
-      />
+        " placeholder="you@company.com">
     </div>
 
     <!-- Phone -->
     <div style="margin-bottom:18px;">
       <label style="display:block; font-size:13px; color:#333; margin-bottom:6px; font-weight:600;">Phone</label>
-      <input
-        type="tel"
-        name="phone"
-        required
-        autocomplete="tel"
-        style="
+      <input type="tel" name="phone" required autocomplete="tel" style="
           width:100%;
           padding:13px 14px;
           border-radius:12px;
@@ -374,9 +361,7 @@ src="https://www.facebook.com/tr?id=689091889996583&ev=PageView&noscript=1"
           font-size:15.5px;
           background:#fff;
           outline:none;
-        "
-        placeholder="(555) 123-4567"
-      />
+        " placeholder="(555) 123-4567">
       <div style="margin-top:6px; font-size:12.5px; color:#6b6b6b;">
         Used only for appointment reminders.
       </div>
@@ -392,7 +377,7 @@ src="https://www.facebook.com/tr?id=689091889996583&ev=PageView&noscript=1"
       color:#555;
       line-height:1.4;
     ">
-      <input type="checkbox" id="termsCheck" required style="margin-top:3px;" />
+      <input type="checkbox" id="termsCheck" required style="margin-top:3px;">
       <span>
         I agree to the
         <a href="/terms" target="_blank" rel="noopener" style="color:#8a6d1d; text-decoration:none; border-bottom:1px solid rgba(138,109,29,.35);">
@@ -406,10 +391,7 @@ src="https://www.facebook.com/tr?id=689091889996583&ev=PageView&noscript=1"
     </label>
 
     <!-- CTA -->
-    <button
-      type="submit"
-      id="demoSubmitBtn"
-      style="
+    <button type="submit" id="demoSubmitBtn" style="
         width:100%;
         padding:15px 16px;
         border-radius:14px;
@@ -419,8 +401,7 @@ src="https://www.facebook.com/tr?id=689091889996583&ev=PageView&noscript=1"
         font-size:16.5px;
         font-weight:700;
         cursor:pointer;
-      "
-    >
+      ">
       Continue → Choose Date
     </button>
 
@@ -432,7 +413,6 @@ src="https://www.facebook.com/tr?id=689091889996583&ev=PageView&noscript=1"
     <p id="formStatus" style="margin-top:12px; font-size:14px; color:#555; display:none; text-align:center;"></p>
   </form>
 </div>
-
         <!-- RIGHT CARD: CHECKLIST -->
         <div class="feature-card">
           <div style="display:flex; flex-direction:column; gap:16px;">
