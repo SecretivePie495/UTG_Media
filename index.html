@@ -523,46 +523,9 @@ src="https://www.facebook.com/tr?id=689091889996583&ev=PageView&noscript=1"
   </footer>
 
   <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      // VIDEO CONTROLS
-      const video = document.getElementById("heroVideo");
-      const playBtn = document.getElementById("playBtn");
-
-      if (video && playBtn) {
-        playBtn.addEventListener("click", () => {
-          const gifThumb = document.getElementById("gifThumb");
-          if (gifThumb) gifThumb.style.display = "none";
-          video.muted = false;
-          video.play().catch(() => {});
-          playBtn.style.display = "none";
-          video.setAttribute("controls", "controls");
-        });
-
-        video.addEventListener("pause", () => { playBtn.style.display = "flex"; });
-        video.addEventListener("play", () => { playBtn.style.display = "none"; });
-      }
-
-     <script>
   document.addEventListener("DOMContentLoaded", () => {
-    // VIDEO CONTROLS
-    const video = document.getElementById("heroVideo");
-    const playBtn = document.getElementById("playBtn");
 
-    if (video && playBtn) {
-      playBtn.addEventListener("click", () => {
-        const gifThumb = document.getElementById("gifThumb");
-        if (gifThumb) gifThumb.style.display = "none";
-        video.muted = false;
-        video.play().catch(() => {});
-        playBtn.style.display = "none";
-        video.setAttribute("controls", "controls");
-      });
-
-      video.addEventListener("pause", () => { playBtn.style.display = "flex"; });
-      video.addEventListener("play", () => { playBtn.style.display = "none"; });
-    }
-
-    // FORM SUBMIT → MAKE HOOK → (OPTIONAL) REDIRECT
+    // FORM SUBMIT → POST ALL FORM DATA → REDIRECT
     const form = document.getElementById("demoForm");
     const btn = document.getElementById("demoSubmitBtn");
     const statusEl = document.getElementById("formStatus");
@@ -572,28 +535,24 @@ src="https://www.facebook.com/tr?id=689091889996583&ev=PageView&noscript=1"
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
 
+      // Collect ALL fields in the form
       const fd = new FormData(form);
 
-      const first_name = (fd.get("first_name") || "").toString().trim();
-      const last_name  = (fd.get("last_name") || "").toString().trim();
-      const email      = (fd.get("email") || "").toString().trim();
-      const phone      = (fd.get("phone") || "").toString().trim();
-
-      // Basic validation
-      if (!first_name || !last_name || !email || !phone) {
-        if (statusEl) {
-          statusEl.style.display = "block";
-          statusEl.textContent = "Please complete all fields.";
+      // Convert FormData → plain object (supports multiple values per key)
+      const data = {};
+      for (const [key, value] of fd.entries()) {
+        if (key in data) {
+          // handle multiple inputs with same name (checkbox groups, etc.)
+          if (Array.isArray(data[key])) data[key].push(value);
+          else data[key] = [data[key], value];
+        } else {
+          data[key] = value;
         }
-        return;
       }
 
+      // Add useful metadata
       const payload = {
-        first_name,
-        last_name,
-        full_name: `${first_name} ${last_name}`.trim(),
-        email,
-        phone,
+        ...data,
         page: window.location.href,
         timestamp: new Date().toISOString()
       };
@@ -609,15 +568,15 @@ src="https://www.facebook.com/tr?id=689091889996583&ev=PageView&noscript=1"
           body: JSON.stringify(payload)
         });
 
-        if (!res.ok) throw new Error("Webhook failed");
+        if (!res.ok) throw new Error("POST failed");
 
-        // Track lead
+        // optional tracking
         if (window.fbq) fbq("track", "Lead");
 
         if (statusEl) statusEl.textContent = "Success! Redirecting...";
 
-        // Redirect AFTER hook succeeds (keep or change)
-        window.location.href = "https://form.jotform.com/udodonyekwere/utgmedia";
+        // Redirect after successful POST
+        window.location.href = "https://nike.com";
 
       } catch (err) {
         console.error(err);
