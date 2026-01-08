@@ -190,16 +190,44 @@ src="https://www.facebook.com/tr?id=689091889996583&ev=PageView&noscript=1"
       </div>
     </div>
 
-    <div class="video-wrapper">
-      <video id="heroVideo" playsinline muted preload="metadata">
-        <source src="https://storage.googleapis.com/media.utg-media.com/Introduction.mp4" type="video/mp4" />
-      </video>
-      <button class="play-button" id="playBtn" aria-label="Play video">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-          <path d="M6.29995 2.84095C5.3011 2.21124 4 2.92906 4 4.10984V15.891C4 17.0718 5.3011 17.7896 6.29995 17.1599L15.6436 11.2693C16.577 10.6809 16.577 9.31997 15.6436 8.73152L6.29995 2.84095Z" fill="#111827"></path>
-        </svg>
-      </button>
-    </div>
+<div class="video-wrapper" style="position:relative;">
+
+  <!-- GIF / Animated Preview -->
+  <img
+    id="gifThumb"
+    src="https://storage.googleapis.com/media.utg-media.com/UdoIntro.gif"
+    alt="Video preview"
+    style="
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      z-index:2;
+      cursor:pointer;
+    "
+  />
+
+  <!-- Video -->
+  <video
+    id="heroVideo"
+    playsinline
+    muted
+    preload="metadata"
+    style="position:relative; z-index:1;"
+  >
+    <source src="https://storage.googleapis.com/media.utg-media.com/Introduction.mp4" type="video/mp4" />
+  </video>
+
+  <!-- Play Button -->
+  <button class="play-button" id="playBtn" aria-label="Play video" style="z-index:3;">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+      <path d="M6.29995 2.84095C5.3011 2.21124 4 2.92906 4 4.10984V15.891C4 17.0718 5.3011 17.7896 6.29995 17.1599L15.6436 11.2693C16.577 10.6809 16.577 9.31997 15.6436 8.73152L6.29995 2.84095Z" fill="#111827"></path>
+    </svg>
+  </button>
+
+</div>
+
 
     <div class="container" style="text-align:center;">
       <p style="font-size:20px; margin:20px 0;">
@@ -380,6 +408,8 @@ src="https://www.facebook.com/tr?id=689091889996583&ev=PageView&noscript=1"
 
       if (video && playBtn) {
         playBtn.addEventListener("click", () => {
+          const gifThumb = document.getElementById("gifThumb");
+          if (gifThumb) gifThumb.style.display = "none";
           video.muted = false;
           video.play().catch(() => {});
           playBtn.style.display = "none";
