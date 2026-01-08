@@ -447,7 +447,7 @@ src="https://www.facebook.com/tr?id=689091889996583&ev=PageView&noscript=1"
               <div style="width:48px; height:48px; display:flex; align-items:center; justify-content:center;">
                 ✅
               </div>
-              <div><strong>Capture and follow up</sftrong> with every lead automatically</div>
+              <div><strong>Capture and follow up</strong> with every lead automatically</div>
             </div>
 
             <div style="display:flex; gap:14px; align-items:flex-start;">
@@ -506,7 +506,7 @@ src="https://www.facebook.com/tr?id=689091889996583&ev=PageView&noscript=1"
       <img src="https://media.licdn.com/dms/image/v2/D5603AQEJXUN8-NuybQ/profile-displayphoto-scale_200_200/B56ZgYfjyjHQAg-/0/1752757583680?e=1769040000&v=beta&t=S7bAf39pO046HwHUC2LOTkf0zgLSU1MSlZeixLsrj6Y" alt="Udo Onyekwere" style="width:56px; height:56px; border-radius:50%; margin-bottom:15px;" />
       <p style="font-size:14px; color:#838388; margin-bottom:20px;"><strong>Udo Onyekwere, CEO UTG Media Inc.</strong></p>
       <h2 style="font-size:clamp(28px, 4vw, 48px); margin-bottom:15px;"><strong>Ready to Have Your Business Fully Set Up in 7 Days?</strong></h2>
-      <p style="font-size:18px; margin-bottom:30px;">We build your website and booking system</p>
+      <p style="font-size:18px; margin-bottom:30px;">Website. CRM. Follow-Up. Booking. All installed for you.</p>
       <a href="#book-call" class="cta-button">Book Your Setup Call</a>
     </div>
   </main>
@@ -542,52 +542,91 @@ src="https://www.facebook.com/tr?id=689091889996583&ev=PageView&noscript=1"
         video.addEventListener("play", () => { playBtn.style.display = "none"; });
       }
 
-      // FORM SUBMIT + PIXEL LEAD EVENT
-      const form = document.getElementById("demoForm");
-      const btn = document.getElementById("demoSubmitBtn");
-      const statusEl = document.getElementById("formStatus");
+     <script>
+  document.addEventListener("DOMContentLoaded", () => {
+    // VIDEO CONTROLS
+    const video = document.getElementById("heroVideo");
+    const playBtn = document.getElementById("playBtn");
 
-      if (form) {
-        form.addEventListener("submit", async (e) => {
-          e.preventDefault();
+    if (video && playBtn) {
+      playBtn.addEventListener("click", () => {
+        const gifThumb = document.getElementById("gifThumb");
+        if (gifThumb) gifThumb.style.display = "none";
+        video.muted = false;
+        video.play().catch(() => {});
+        playBtn.style.display = "none";
+        video.setAttribute("controls", "controls");
+      });
 
-          const fd = new FormData(form);
-          const payload = {
-            name: (fd.get("name") || "").toString().trim(),
-            email: (fd.get("email") || "").toString().trim(),
-            page: window.location.href,
-            timestamp: new Date().toISOString()
-          };
+      video.addEventListener("pause", () => { playBtn.style.display = "flex"; });
+      video.addEventListener("play", () => { playBtn.style.display = "none"; });
+    }
 
-          if (!payload.name || !payload.email) return;
+    // FORM SUBMIT → MAKE HOOK → (OPTIONAL) REDIRECT
+    const form = document.getElementById("demoForm");
+    const btn = document.getElementById("demoSubmitBtn");
+    const statusEl = document.getElementById("formStatus");
 
-          // UI feedback
-          if (btn) { btn.disabled = true; btn.textContent = "Submitting..."; }
-          if (statusEl) { statusEl.style.display = "block"; statusEl.textContent = "Submitting..."; }
+    if (!form) return;
 
-          try {
-            const res = await fetch("https://hook.us1.make.com/9mju1x4ski87bofborvga3n10xt5jbx2", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(payload)
-            });
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
 
-            if (!res.ok) throw new Error("Webhook failed");
+      const fd = new FormData(form);
 
-            // Track a conversion (optional but recommended)
-            if (window.fbq) fbq("track", "Lead");
+      const first_name = (fd.get("first_name") || "").toString().trim();
+      const last_name  = (fd.get("last_name") || "").toString().trim();
+      const email      = (fd.get("email") || "").toString().trim();
+      const phone      = (fd.get("phone") || "").toString().trim();
 
-            if (statusEl) statusEl.textContent = "Success! Redirecting...";
-            window.location.href = "https://form.jotform.com/udodonyekwere/utgmedia";
-          } catch (err) {
-            console.error(err);
-            if (statusEl) statusEl.textContent = "Submission failed. Please try again.";
-            alert("Submission failed. Please try again.");
-            if (btn) { btn.disabled = false; btn.textContent = "Submit and choose date"; }
-          }
+      // Basic validation
+      if (!first_name || !last_name || !email || !phone) {
+        if (statusEl) {
+          statusEl.style.display = "block";
+          statusEl.textContent = "Please complete all fields.";
+        }
+        return;
+      }
+
+      const payload = {
+        first_name,
+        last_name,
+        full_name: `${first_name} ${last_name}`.trim(),
+        email,
+        phone,
+        page: window.location.href,
+        timestamp: new Date().toISOString()
+      };
+
+      // UI feedback
+      if (btn) { btn.disabled = true; btn.textContent = "Submitting..."; }
+      if (statusEl) { statusEl.style.display = "block"; statusEl.textContent = "Submitting..."; }
+
+      try {
+        const res = await fetch("https://hook.us1.make.com/9mju1x4ski87bofborvga3n10xt5jbx2", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
         });
+
+        if (!res.ok) throw new Error("Webhook failed");
+
+        // Track lead
+        if (window.fbq) fbq("track", "Lead");
+
+        if (statusEl) statusEl.textContent = "Success! Redirecting...";
+
+        // Redirect AFTER hook succeeds (keep or change)
+        window.location.href = "https://form.jotform.com/udodonyekwere/utgmedia";
+
+      } catch (err) {
+        console.error(err);
+        if (statusEl) statusEl.textContent = "Submission failed. Please try again.";
+        if (btn) { btn.disabled = false; btn.textContent = "Continue → Choose Date"; }
+        alert("Submission failed. Please try again.");
       }
     });
-  </script>
+  });
+</script>
 </body>
 </html>
