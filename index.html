@@ -153,6 +153,7 @@ https://storage.googleapis.com/facelessbroll_website/UdoPIC.jpg 5x" sizes="(max-
   class="fun-mx-auto fun-max-w-xl fun-space-y-4 sm:fun-mt-2"
   method="POST"
   action="https://hook.us1.make.com/9mju1x4ski87bofborvga3n10xt5jbx2"
+  autocomplete="off"
 >
 
 	  <!-- 🔒 Honeypot (bots fill this, humans don't) -->
@@ -451,6 +452,22 @@ https://storage.googleapis.com/media.utg-media.com/utgmedia.png 5x" sizes="(max-
       } catch (err) {}
 
       window.location.href = "https://utgmedia.notion.site/Udo-s-Funnel-Swipe-File-2e49cb48a06f80ecbf42d70db8d908f8?source=copy_link";
+    });
+  });
+</script>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const form = document.getElementById("leadForm");
+    if (!form) return;
+
+    form.addEventListener("submit", (e) => {
+      const honeypot = form.querySelector('input[name="company_website"]');
+      if (honeypot && honeypot.value.trim() !== "") {
+        e.preventDefault();     // ✅ stops the POST to Make
+        e.stopPropagation();    // ✅ extra safety
+        console.warn("Blocked submit: honeypot was filled.");
+        return false;
+      }
     });
   });
 </script>
