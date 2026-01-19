@@ -441,19 +441,24 @@ textarea{
 <script>
 /* =======================
    CONFIG / TEMPLATE
+   - DEFAULT always stays as the first bubble
 ======================= */
 const DEFAULTS = {
   firstMsg: "Hey {{name}}, this is Bella with Custom Solar. We noticed a solar permit was submitted in Dallas for your home. Are you fully up and running with your solar system (PTO + monitoring app)? If you’re good to go, awesome. If not, or if anything feels incomplete, I’m happy to help you figure out the next step."
 };
 
-/* textarea auto-grow */
+/* =======================
+   TEXTAREA AUTO-GROW
+======================= */
 const ta = document.querySelector('textarea');
 ta.addEventListener('input', () => {
   ta.style.height = 'auto';
   ta.style.height = Math.min(ta.scrollHeight, 120) + 'px';
 });
 
-/* robust params */
+/* =======================
+   ROBUST PARAMS
+======================= */
 function getParamsRobust() {
   if (location.search && location.search.length > 1) return new URLSearchParams(location.search);
   const href = String(location.href || "");
@@ -471,16 +476,15 @@ const from = p.get('from') || '';
 const sid = p.get('sid') || '';
 const carrier = p.get('carrier') || '';
 
-const first = p.get('first'); // override
-const msg   = p.get('msg');   // fallback
-const safeName = name.trim() ? name : "there";
+/* IMPORTANT:
+   - Default message is ALWAYS first.
+   - URL response becomes the *reply bubble*.
+   - Use msg= (or reply=) to preload a user response bubble.
+*/
+const urlReply = (p.get('msg') || p.get('reply') || '').trim();
 
-let firstMessage =
-  (first && first.trim()) ||
-  (msg && msg.trim()) ||
-  DEFAULTS.firstMsg;
-
-firstMessage = firstMessage.replaceAll("{{name}}", safeName);
+const safeName = name.trim() ? name.trim() : "there";
+const firstMessage = DEFAULTS.firstMsg.replaceAll("{{name}}", safeName);
 
 document.title = `Messages – ${name || to || 'Unknown'}`;
 document.getElementById('contactName').textContent = name || to || 'Unknown';
@@ -492,7 +496,7 @@ document.getElementById('sidInput').value = sid;
 document.getElementById('carrierInput').value = carrier;
 
 /* =======================
-   THREAD (NOW SUPPORTS OUTGOING)
+   THREAD RENDERING (2 bubbles on load)
 ======================= */
 const threadEl = document.getElementById('thread');
 const now = new Date();
@@ -519,6 +523,11 @@ function formatDivider(d){
 const messages = [
   { id: cryptoRandomId(), dir: "in",  text: firstMessage, ts: now, reaction: "" }
 ];
+
+// If URL provides a reply, show it as the user's outgoing bubble
+if (urlReply) {
+  messages.push({ id: cryptoRandomId(), dir: "out", text: urlReply, ts: new Date(now.getTime() + 15 * 1000), reaction: "" });
+}
 
 function renderThread(){
   threadEl.innerHTML = "";
@@ -555,7 +564,7 @@ function scrollToBottom(){
   chat.scrollTop = chat.scrollHeight;
 }
 
-/* typing then show first message */
+/* typing then show */
 const typingRow = document.getElementById('typingRow');
 typingRow.style.display = 'flex';
 
@@ -567,7 +576,7 @@ setTimeout(() => {
 }, 450);
 
 /* =======================
-   SEND: show outgoing bubble + still POST to Make
+   SEND: show outgoing bubble + POST to Make
 ======================= */
 const form = document.getElementById("smsForm");
 
@@ -589,25 +598,24 @@ form.addEventListener("submit", async (e) => {
   // POST to Make in background
   try {
     const fd = new FormData(form);
-    fd.set("body", text); // ensure body is what we sent
+    fd.set("body", text);
 
     await fetch(form.action, {
       method: "POST",
       body: fd,
-      mode: "no-cors" // avoids CORS issues; Make still receives it
+      mode: "no-cors"
     });
   } catch (err) {
-    // If fetch fails, keep bubble (still looks sent)
-    // You can optionally show an error toast here if you want.
     console.error(err);
   }
 });
 
 /* =======================
-   TAPBACK (LONG PRESS) — works for both bubbles
+   TAPBACK (LONG PRESS)
 ======================= */
 const overlay = document.getElementById("overlay");
 const tapback = document.getElementById("tapback");
+
 let pressTimer = null;
 let activeBubbleId = null;
 
