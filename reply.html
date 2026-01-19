@@ -84,6 +84,11 @@ textarea{width:100%;border:none;outline:none;font-size:16px;resize:none}
 </form>
 
 <script>
+const DEFAULTS = {
+  firstMsg: "Hey! Just following up — are you the best number to reach you at?"
+  // change this line anytime you want a new default
+};
+
 const ta=document.querySelector('textarea');
 ta.addEventListener('input',()=>{ta.style.height='auto';ta.style.height=Math.min(ta.scrollHeight,120)+'px'});
 
@@ -93,17 +98,27 @@ const to=p.get('to')||'';
 const from=p.get('from')||'';
 const sid=p.get('sid')||'';
 const carrier=p.get('carrier')||'';
-const msg=p.get('msg')||'';
+
+// NEW: first message logic
+// - first= overrides the default
+// - msg= can still be used (fallback)
+const first = p.get('first');   // preferred override param
+const msg   = p.get('msg');     // your existing param
+
+const firstMessage =
+  (first && first.trim()) ||
+  (msg && msg.trim()) ||
+  DEFAULTS.firstMsg;
 
 document.title=`Messages – ${name||to||'Unknown'}`;
 document.getElementById('contactName').textContent=name||to||'Unknown';
 document.getElementById('contactTo').textContent=to;
-if(msg) document.getElementById('lastMsg').textContent=msg;
+
+// Always show the first message bubble
+document.getElementById('lastMsg').textContent = firstMessage;
 
 document.getElementById('toInput').value=to;
 document.getElementById('fromInput').value=from;
 document.getElementById('sidInput').value=sid;
 document.getElementById('carrierInput').value=carrier;
 </script>
-</body>
-</html>
