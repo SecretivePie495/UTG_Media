@@ -202,15 +202,6 @@ body{
 }
 @keyframes pop{to{transform:translateY(0);opacity:1}}
 .bubble.in{background:var(--in);border-bottom-left-radius:7px}
-.bubble.out{
-  background:linear-gradient(135deg,var(--out1),var(--out2));
-  color:#fff;border-bottom-right-radius:7px;overflow:hidden;
-}
-.bubble.out:before{
-  content:""; position:absolute; inset:-40px;
-  background:radial-gradient(circle at 30% 20%, rgba(255,255,255,.35), transparent 35%);
-  transform:rotate(10deg); opacity:.6;
-}
 
 /* reaction “tapback” badge */
 .reaction{
@@ -232,18 +223,6 @@ body{
 @media (prefers-color-scheme: dark){
   .reaction{background:rgba(28,28,30,.82);color:#fff;border-color:rgba(255,255,255,.12)}
 }
-.row.in .reaction{right:8px}
-.row.out .reaction{right:8px}
-
-/* “Delivered/Read” */
-.receipt{
-  font-size:12px;
-  color:var(--muted);
-  margin-top:4px;
-  margin-right:8px;
-  text-align:right;
-}
-.row.out + .receipt{margin-top:-4px}
 
 /* typing */
 .typing{
@@ -476,8 +455,9 @@ const to = p.get('to') || '';
 const from = p.get('from') || '';
 const sid = p.get('sid') || '';
 const carrier = p.get('carrier') || '';
-const first = p.get('first'); // override first message
-const msg   = p.get('msg');   // fallback message
+const first = p.get('first'); // preferred override param
+const msg   = p.get('msg');   // existing param fallback
+
 const safeName = name.trim() ? name : "there";
 
 let firstMessage =
@@ -497,37 +477,9 @@ document.getElementById('sidInput').value = sid;
 document.getElementById('carrierInput').value = carrier;
 
 /* =======================
-   THREAD RENDERING
-   - You can add/remove messages here
-   - Outgoing message(s) are just for realism
+   THREAD RENDERING (SINGLE MESSAGE ONLY)
 ======================= */
 const threadEl = document.getElementById('thread');
-
-const now = new Date();
-const tMinus = (mins) => new Date(now.getTime() - mins * 60 * 1000);
-
-const messages = [
-  { id: cryptoRandomId(), dir: "in",  text: firstMessage, ts: tMinus(3), reaction: "" },
-  // optional “realism” messages (can delete these if you only want 1 incoming)
-  { id: cryptoRandomId(), dir: "out", text: "Hey Bella — yes PTO is done but I’m not seeing production in the app.", ts: tMinus(2), receipt: "Delivered", reaction: "" },
-  { id: cryptoRandomId(), dir: "in",  text: "Got it. Which monitoring app are you using (Enphase / SolarEdge / Tesla / other)?", ts: tMinus(1), reaction: "" },
-];
-
-function formatTime(d){
-  // iMessage-ish: 2:41 PM
-  return d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
-}
-
-function formatDivider(d){
-  // simple divider: Today 2:41 PM
-  const isToday = sameDay(d, new Date());
-  const day = isToday ? "Today" : d.toLocaleDateString([], { weekday:'short', month:'short', day:'numeric' });
-  return `${day} ${formatTime(d)}`;
-}
-
-function sameDay(a,b){
-  return a.getFullYear()===b.getFullYear() && a.getMonth()===b.getMonth() && a.getDate()===b.getDate();
-}
 
 function cryptoRandomId(){
   if (window.crypto?.getRandomValues){
@@ -538,54 +490,46 @@ function cryptoRandomId(){
   return Math.random().toString(16).slice(2);
 }
 
+function formatTime(d){
+  return d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+}
+
+function formatDivider(d){
+  // Today 2:41 PM
+  const isToday = (d.toDateString() === new Date().toDateString());
+  const day = isToday ? "Today" : d.toLocaleDateString([], { weekday:'short', month:'short', day:'numeric' });
+  return `${day} ${formatTime(d)}`;
+}
+
+const messages = [
+  { id: cryptoRandomId(), dir: "in", text: firstMessage, ts: new Date(), reaction: "" }
+];
+
 function renderThread(){
   threadEl.innerHTML = "";
 
-  // Insert one “timestamp divider” before the first message (simple, clean)
-  const firstTs = messages[0]?.ts || new Date();
+  // Timestamp divider
   const divider = document.createElement("div");
   divider.className = "time";
-  divider.textContent = formatDivider(firstTs);
+  divider.textContent = formatDivider(messages[0].ts);
   threadEl.appendChild(divider);
 
-  for (const m of messages){
-    const row = document.createElement("div");
-    row.className = `row ${m.dir}`;
+  // One incoming bubble
+  const row = document.createElement("div");
+  row.className = "row in";
 
-    const bubble = document.createElement("div");
-    bubble.className = `bubble ${m.dir}`;
-    bubble.dataset.id = m.id;
-    bubble.textContent = m.text;
+  const bubble = document.createElement("div");
+  bubble.className = "bubble in";
+  bubble.dataset.id = messages[0].id;
+  bubble.textContent = messages[0].text;
 
-    const reaction = document.createElement("div");
-    reaction.className = "reaction";
-    reaction.textContent = m.reaction || "";
-    if (m.reaction) reaction.style.display = "inline-flex";
-    bubble.appendChild(reaction);
+  const reaction = document.createElement("div");
+  reaction.className = "reaction";
+  row.appendChild(bubble);
+  bubble.appendChild(reaction);
 
-    row.appendChild(bubble);
-    threadEl.appendChild(row);
-
-    // “Delivered/Read” for outgoing
-    if (m.dir === "out" && m.receipt){
-      const r = document.createElement("div");
-      r.className = "receipt";
-      r.textContent = m.receipt;
-      threadEl.appendChild(r);
-    }
-  }
+  threadEl.appendChild(row);
 }
-
-/* typing effect (optional) */
-const typingRow = document.getElementById('typingRow');
-typingRow.style.display = 'flex';
-renderThread();
-
-setTimeout(() => {
-  typingRow.style.display = 'none';
-  scrollToBottom();
-  setTimeout(() => ta.focus(), 150);
-}, 450);
 
 function scrollToBottom(){
   const chat = document.getElementById("chat");
@@ -593,7 +537,20 @@ function scrollToBottom(){
 }
 
 /* =======================
-   TAPBACK (LONG PRESS)
+   TYPING EFFECT THEN SHOW MESSAGE
+======================= */
+const typingRow = document.getElementById('typingRow');
+typingRow.style.display = 'flex';
+
+setTimeout(() => {
+  typingRow.style.display = 'none';
+  renderThread();
+  scrollToBottom();
+  setTimeout(() => ta.focus(), 150);
+}, 450);
+
+/* =======================
+   TAPBACK (LONG PRESS) — works on the single bubble
 ======================= */
 const overlay = document.getElementById("overlay");
 const tapback = document.getElementById("tapback");
@@ -604,10 +561,8 @@ let activeBubbleId = null;
 function openTapbackForBubble(bubbleEl){
   activeBubbleId = bubbleEl.dataset.id;
 
-  // position tapback above composer, roughly centered (simple + looks good)
   overlay.style.display = "block";
   tapback.style.display = "inline-flex";
-  // slight “bounce” feel
   tapback.animate(
     [{ transform:"translateX(-50%) scale(.98)", opacity:.0 }, { transform:"translateX(-50%) scale(1)", opacity:1 }],
     { duration:140, easing:"ease-out" }
@@ -629,33 +584,32 @@ tapback.addEventListener("click", (e) => {
 
   if (!activeBubbleId) return;
 
-  const msg = messages.find(x => x.id === activeBubbleId);
-  if (msg){
-    msg.reaction = reaction;
+  const msgObj = messages.find(x => x.id === activeBubbleId);
+  if (msgObj){
+    msgObj.reaction = reaction;
     renderThread();
-    scrollToBottom();
+
+    // show/hide badge
+    const bubble = threadEl.querySelector(`.bubble[data-id="${activeBubbleId}"]`);
+    const badge = bubble.querySelector(".reaction");
+    badge.textContent = reaction;
+    badge.style.display = reaction ? "inline-flex" : "none";
   }
   closeTapback();
 });
 
-// long press detection on bubbles
+// long press detection on the single bubble
 document.addEventListener("pointerdown", (e) => {
   const bubble = e.target.closest(".bubble");
   if (!bubble) return;
 
-  // ignore if user is selecting text in desktop
-  if (window.getSelection && window.getSelection().toString()) return;
-
   clearTimeout(pressTimer);
-  pressTimer = setTimeout(() => {
-    openTapbackForBubble(bubble);
-  }, 420);
+  pressTimer = setTimeout(() => openTapbackForBubble(bubble), 420);
 });
-
 document.addEventListener("pointerup", () => clearTimeout(pressTimer));
 document.addEventListener("pointercancel", () => clearTimeout(pressTimer));
 document.addEventListener("scroll", () => clearTimeout(pressTimer), { passive:true });
-
 </script>
+
 </body>
 </html>
