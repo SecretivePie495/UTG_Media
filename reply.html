@@ -1,1 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<title>Messages</title>
 
+<style>
+:root{
+  --bg:#f2f2f7; --card:rgba(255,255,255,.85); --border:rgba(60,60,67,.18);
+  --text:#111; --muted:rgba(60,60,67,.65);
+  --in:#e5e5ea; --out:#0a84ff; --out2:#007aff;
+  --shadow:0 10px 30px rgba(0,0,0,.10);
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#000; --card:rgba(28,28,30,.75); --border:rgba(84,84,88,.35);
+    --text:#fff; --muted:rgba(235,235,245,.65); --in:#2c2c2e;
+    --shadow:0 10px 30px rgba(0,0,0,.35);
+  }
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",Helvetica,Arial;
+  background:var(--bg); color:var(--text);
+}
+.wrap{max-width:680px;margin:0 auto;min-height:100%;display:flex;flex-direction:column}
+.header{position:sticky;top:0;backdrop-filter:blur(18px);border-bottom:1px solid var(--border)}
+.header-inner{padding:14px 16px;display:flex;gap:10px}
+.avatar{width:36px;height:36px;border-radius:12px;background:linear-gradient(135deg,#0a84ff,#ff2d55)}
+.title strong{font-size:16px;font-weight:700}
+.title span{font-size:12px;color:var(--muted)}
+.chat{flex:1;padding:16px;padding-bottom:120px}
+.row{display:flex;margin:8px 0}
+.row.in{justify-content:flex-start}
+.row.out{justify-content:flex-end}
+.bubble{max-width:82%;padding:10px 14px;border-radius:18px;font-size:16px}
+.bubble.in{background:var(--in);border-bottom-left-radius:6px}
+.bubble.out{background:linear-gradient(135deg,var(--out),var(--out2));color:#fff;border-bottom-right-radius:6px}
+.composer{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--border)}
+.composer-inner{max-width:680px;margin:0 auto;padding:10px;display:flex;gap:10px}
+.input{flex:1;border:1px solid var(--border);border-radius:22px;padding:10px}
+textarea{width:100%;border:none;outline:none;font-size:16px;resize:none}
+.btn{width:46px;height:46px;border:none;border-radius:16px;background:#007aff;color:#fff;font-weight:700}
+</style>
+</head>
+
+<body>
+<div class="wrap">
+  <div class="header">
+    <div class="header-inner">
+      <div class="avatar"></div>
+      <div class="title">
+        <strong id="contactName">Loading…</strong>
+        <span id="contactTo"></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="chat">
+    <div class="row in">
+      <div class="bubble in" id="lastMsg">…</div>
+    </div>
+  </div>
+</div>
+
+<form class="composer" method="POST" action="https://hook.us1.make.com/ccjgn5ufsliyu7811dulrvhtxq9uehr6">
+  <div class="composer-inner">
+    <input type="hidden" name="to" id="toInput">
+    <input type="hidden" name="from" id="fromInput">
+    <input type="hidden" name="sid" id="sidInput">
+    <input type="hidden" name="carrier" id="carrierInput">
+
+    <div class="input">
+      <textarea name="body" rows="1" placeholder="iMessage…"></textarea>
+    </div>
+
+    <button class="btn" type="submit">↑</button>
+  </div>
+</form>
+
+<script>
+const ta=document.querySelector('textarea');
+ta.addEventListener('input',()=>{ta.style.height='auto';ta.style.height=Math.min(ta.scrollHeight,120)+'px'});
+
+const p=new URLSearchParams(location.search);
+const name=p.get('name')||'';
+const to=p.get('to')||'';
+const from=p.get('from')||'';
+const sid=p.get('sid')||'';
+const carrier=p.get('carrier')||'';
+const msg=p.get('msg')||'';
+
+document.title=`Messages – ${name||to||'Unknown'}`;
+document.getElementById('contactName').textContent=name||to||'Unknown';
+document.getElementById('contactTo').textContent=to;
+if(msg) document.getElementById('lastMsg').textContent=msg;
+
+document.getElementById('toInput').value=to;
+document.getElementById('fromInput').value=from;
+document.getElementById('sidInput').value=sid;
+document.getElementById('carrierInput').value=carrier;
+</script>
+</body>
+</html>
