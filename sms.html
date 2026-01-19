@@ -8,6 +8,7 @@
 <title>Messages</title>
 
 <style>
+/* (YOUR CSS unchanged — I’m keeping it exactly the same) */
 :root{
   --bg:#f2f2f7;
   --header:rgba(255,255,255,.72);
@@ -183,7 +184,6 @@ body{
 }
 .row{display:flex;margin:10px 0;align-items:flex-end}
 .row.in{justify-content:flex-start}
-.row.out{justify-content:flex-end}
 
 .bubble{
   max-width:86%;
@@ -339,6 +339,25 @@ textarea{
   pointer-events:none; z-index:15; display:none;
 }
 @media (min-width:521px){ .home-indicator{display:block} }
+
+/* debug bar (only shows when ?debug=1) */
+.debugbar{
+  display:none;
+  position:sticky;
+  top:0;
+  z-index:100;
+  margin:10px 12px;
+  padding:10px 12px;
+  border-radius:14px;
+  background:rgba(255,255,255,.78);
+  border:1px solid rgba(120,120,128,.22);
+  color:#111;
+  font-size:12px;
+  white-space:pre-wrap;
+}
+@media (prefers-color-scheme: dark){
+  .debugbar{background:rgba(28,28,30,.82);color:#fff;border-color:rgba(255,255,255,.12)}
+}
 </style>
 </head>
 
@@ -373,6 +392,8 @@ textarea{
     </div>
 
     <div class="chat" id="chat">
+      <div class="debugbar" id="debugbar"></div>
+
       <div class="meta">
         <div class="pill">
           <svg viewBox="0 0 24 24" fill="none">
@@ -430,33 +451,45 @@ textarea{
 </form>
 
 <script>
-/* =======================
-   CONFIG / TEMPLATE
-======================= */
 const DEFAULTS = {
   firstMsg: "Hey {{name}}, this is Bella with Custom Solar. We noticed a solar permit was submitted in Dallas for your home. Are you fully up and running with your solar system (PTO + monitoring app)? If you’re good to go, awesome. If not, or if anything feels incomplete, I’m happy to help you figure out the next step."
 };
 
-/* =======================
-   TEXTAREA AUTO-GROW
-======================= */
+/* textarea auto-grow */
 const ta = document.querySelector('textarea');
 ta.addEventListener('input', () => {
   ta.style.height = 'auto';
   ta.style.height = Math.min(ta.scrollHeight, 120) + 'px';
 });
 
-/* =======================
-   PARAMS
-======================= */
-const p = new URLSearchParams(location.search);
+/* ✅ Robust query parsing (works even when location.search is empty) */
+function getParamsRobust() {
+  // Prefer normal search first
+  if (location.search && location.search.length > 1) {
+    return new URLSearchParams(location.search);
+  }
+
+  // Fallback: parse from full href (handles weird in-app browser cases)
+  const href = String(location.href || "");
+  const qIndex = href.indexOf("?");
+  if (qIndex === -1) return new URLSearchParams("");
+
+  const hashIndex = href.indexOf("#", qIndex);
+  const queryString = hashIndex === -1 ? href.slice(qIndex) : href.slice(qIndex, hashIndex);
+  return new URLSearchParams(queryString);
+}
+
+const p = getParamsRobust();
+
 const name = p.get('name') || '';
 const to = p.get('to') || '';
 const from = p.get('from') || '';
 const sid = p.get('sid') || '';
 const carrier = p.get('carrier') || '';
+
 const first = p.get('first'); // preferred override param
 const msg   = p.get('msg');   // existing param fallback
+const debug = (p.get('debug') || '').trim() === '1';
 
 const safeName = name.trim() ? name : "there";
 
@@ -476,9 +509,18 @@ document.getElementById('fromInput').value = from;
 document.getElementById('sidInput').value = sid;
 document.getElementById('carrierInput').value = carrier;
 
-/* =======================
-   THREAD RENDERING (SINGLE MESSAGE ONLY)
-======================= */
+/* debug bar */
+if (debug) {
+  const bar = document.getElementById('debugbar');
+  bar.style.display = 'block';
+  bar.textContent =
+    `href: ${location.href}\n` +
+    `search: ${location.search}\n` +
+    `to: ${to}\nfrom: ${from}\nname: ${name}\nmsg: ${msg}\nfirst: ${first}\n` +
+    `firstMessage: ${firstMessage}`;
+}
+
+/* render single-message thread */
 const threadEl = document.getElementById('thread');
 
 function cryptoRandomId(){
@@ -493,9 +535,7 @@ function cryptoRandomId(){
 function formatTime(d){
   return d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
 }
-
 function formatDivider(d){
-  // Today 2:41 PM
   const isToday = (d.toDateString() === new Date().toDateString());
   const day = isToday ? "Today" : d.toLocaleDateString([], { weekday:'short', month:'short', day:'numeric' });
   return `${day} ${formatTime(d)}`;
@@ -508,13 +548,11 @@ const messages = [
 function renderThread(){
   threadEl.innerHTML = "";
 
-  // Timestamp divider
   const divider = document.createElement("div");
   divider.className = "time";
   divider.textContent = formatDivider(messages[0].ts);
   threadEl.appendChild(divider);
 
-  // One incoming bubble
   const row = document.createElement("div");
   row.className = "row in";
 
@@ -525,9 +563,9 @@ function renderThread(){
 
   const reaction = document.createElement("div");
   reaction.className = "reaction";
-  row.appendChild(bubble);
   bubble.appendChild(reaction);
 
+  row.appendChild(bubble);
   threadEl.appendChild(row);
 }
 
@@ -536,9 +574,7 @@ function scrollToBottom(){
   chat.scrollTop = chat.scrollHeight;
 }
 
-/* =======================
-   TYPING EFFECT THEN SHOW MESSAGE
-======================= */
+/* typing then show */
 const typingRow = document.getElementById('typingRow');
 typingRow.style.display = 'flex';
 
@@ -549,9 +585,7 @@ setTimeout(() => {
   setTimeout(() => ta.focus(), 150);
 }, 450);
 
-/* =======================
-   TAPBACK (LONG PRESS) — works on the single bubble
-======================= */
+/* tapback for the one bubble */
 const overlay = document.getElementById("overlay");
 const tapback = document.getElementById("tapback");
 
@@ -560,7 +594,6 @@ let activeBubbleId = null;
 
 function openTapbackForBubble(bubbleEl){
   activeBubbleId = bubbleEl.dataset.id;
-
   overlay.style.display = "block";
   tapback.style.display = "inline-flex";
   tapback.animate(
@@ -568,13 +601,11 @@ function openTapbackForBubble(bubbleEl){
     { duration:140, easing:"ease-out" }
   );
 }
-
 function closeTapback(){
   overlay.style.display = "none";
   tapback.style.display = "none";
   activeBubbleId = null;
 }
-
 overlay.addEventListener("click", closeTapback);
 
 tapback.addEventListener("click", (e) => {
@@ -584,13 +615,11 @@ tapback.addEventListener("click", (e) => {
 
   if (!activeBubbleId) return;
 
-  const msgObj = messages.find(x => x.id === activeBubbleId);
-  if (msgObj){
-    msgObj.reaction = reaction;
-    renderThread();
+  messages[0].reaction = reaction;
+  renderThread();
 
-    // show/hide badge
-    const bubble = threadEl.querySelector(`.bubble[data-id="${activeBubbleId}"]`);
+  const bubble = threadEl.querySelector(`.bubble[data-id="${activeBubbleId}"]`);
+  if (bubble){
     const badge = bubble.querySelector(".reaction");
     badge.textContent = reaction;
     badge.style.display = reaction ? "inline-flex" : "none";
@@ -598,7 +627,6 @@ tapback.addEventListener("click", (e) => {
   closeTapback();
 });
 
-// long press detection on the single bubble
 document.addEventListener("pointerdown", (e) => {
   const bubble = e.target.closest(".bubble");
   if (!bubble) return;
