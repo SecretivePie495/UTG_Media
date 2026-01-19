@@ -8,7 +8,6 @@
 <title>Messages</title>
 
 <style>
-/* (YOUR CSS unchanged — I’m keeping it exactly the same) */
 :root{
   --bg:#f2f2f7;
   --header:rgba(255,255,255,.72);
@@ -184,6 +183,7 @@ body{
 }
 .row{display:flex;margin:10px 0;align-items:flex-end}
 .row.in{justify-content:flex-start}
+.row.out{justify-content:flex-end}
 
 .bubble{
   max-width:86%;
@@ -202,8 +202,17 @@ body{
 }
 @keyframes pop{to{transform:translateY(0);opacity:1}}
 .bubble.in{background:var(--in);border-bottom-left-radius:7px}
+.bubble.out{
+  background:linear-gradient(135deg,var(--out1),var(--out2));
+  color:#fff;border-bottom-right-radius:7px;overflow:hidden;
+}
+.bubble.out:before{
+  content:""; position:absolute; inset:-40px;
+  background:radial-gradient(circle at 30% 20%, rgba(255,255,255,.35), transparent 35%);
+  transform:rotate(10deg); opacity:.6;
+}
 
-/* reaction “tapback” badge */
+/* reaction badge */
 .reaction{
   position:absolute;
   bottom:-10px;
@@ -339,25 +348,6 @@ textarea{
   pointer-events:none; z-index:15; display:none;
 }
 @media (min-width:521px){ .home-indicator{display:block} }
-
-/* debug bar (only shows when ?debug=1) */
-.debugbar{
-  display:none;
-  position:sticky;
-  top:0;
-  z-index:100;
-  margin:10px 12px;
-  padding:10px 12px;
-  border-radius:14px;
-  background:rgba(255,255,255,.78);
-  border:1px solid rgba(120,120,128,.22);
-  color:#111;
-  font-size:12px;
-  white-space:pre-wrap;
-}
-@media (prefers-color-scheme: dark){
-  .debugbar{background:rgba(28,28,30,.82);color:#fff;border-color:rgba(255,255,255,.12)}
-}
 </style>
 </head>
 
@@ -392,8 +382,6 @@ textarea{
     </div>
 
     <div class="chat" id="chat">
-      <div class="debugbar" id="debugbar"></div>
-
       <div class="meta">
         <div class="pill">
           <svg viewBox="0 0 24 24" fill="none">
@@ -424,7 +412,7 @@ textarea{
   <button class="remove" data-reaction="" aria-label="Remove reaction">Remove</button>
 </div>
 
-<form class="composer" method="POST" action="https://hook.us1.make.com/9bd7p4t1l3mbq8qr7uqx2c28g3whgbu3">
+<form id="smsForm" class="composer" method="POST" action="https://hook.us1.make.com/9bd7p4t1l3mbq8qr7uqx2c28g3whgbu3">
   <div class="composer-inner">
     <input type="hidden" name="to" id="toInput">
     <input type="hidden" name="from" id="fromInput">
@@ -451,6 +439,9 @@ textarea{
 </form>
 
 <script>
+/* =======================
+   CONFIG / TEMPLATE
+======================= */
 const DEFAULTS = {
   firstMsg: "Hey {{name}}, this is Bella with Custom Solar. We noticed a solar permit was submitted in Dallas for your home. Are you fully up and running with your solar system (PTO + monitoring app)? If you’re good to go, awesome. If not, or if anything feels incomplete, I’m happy to help you figure out the next step."
 };
@@ -462,35 +453,26 @@ ta.addEventListener('input', () => {
   ta.style.height = Math.min(ta.scrollHeight, 120) + 'px';
 });
 
-/* ✅ Robust query parsing (works even when location.search is empty) */
+/* robust params */
 function getParamsRobust() {
-  // Prefer normal search first
-  if (location.search && location.search.length > 1) {
-    return new URLSearchParams(location.search);
-  }
-
-  // Fallback: parse from full href (handles weird in-app browser cases)
+  if (location.search && location.search.length > 1) return new URLSearchParams(location.search);
   const href = String(location.href || "");
   const qIndex = href.indexOf("?");
   if (qIndex === -1) return new URLSearchParams("");
-
   const hashIndex = href.indexOf("#", qIndex);
   const queryString = hashIndex === -1 ? href.slice(qIndex) : href.slice(qIndex, hashIndex);
   return new URLSearchParams(queryString);
 }
 
 const p = getParamsRobust();
-
 const name = p.get('name') || '';
 const to = p.get('to') || '';
 const from = p.get('from') || '';
 const sid = p.get('sid') || '';
 const carrier = p.get('carrier') || '';
 
-const first = p.get('first'); // preferred override param
-const msg   = p.get('msg');   // existing param fallback
-const debug = (p.get('debug') || '').trim() === '1';
-
+const first = p.get('first'); // override
+const msg   = p.get('msg');   // fallback
 const safeName = name.trim() ? name : "there";
 
 let firstMessage =
@@ -509,19 +491,11 @@ document.getElementById('fromInput').value = from;
 document.getElementById('sidInput').value = sid;
 document.getElementById('carrierInput').value = carrier;
 
-/* debug bar */
-if (debug) {
-  const bar = document.getElementById('debugbar');
-  bar.style.display = 'block';
-  bar.textContent =
-    `href: ${location.href}\n` +
-    `search: ${location.search}\n` +
-    `to: ${to}\nfrom: ${from}\nname: ${name}\nmsg: ${msg}\nfirst: ${first}\n` +
-    `firstMessage: ${firstMessage}`;
-}
-
-/* render single-message thread */
+/* =======================
+   THREAD (NOW SUPPORTS OUTGOING)
+======================= */
 const threadEl = document.getElementById('thread');
+const now = new Date();
 
 function cryptoRandomId(){
   if (window.crypto?.getRandomValues){
@@ -535,6 +509,7 @@ function cryptoRandomId(){
 function formatTime(d){
   return d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
 }
+
 function formatDivider(d){
   const isToday = (d.toDateString() === new Date().toDateString());
   const day = isToday ? "Today" : d.toLocaleDateString([], { weekday:'short', month:'short', day:'numeric' });
@@ -542,7 +517,7 @@ function formatDivider(d){
 }
 
 const messages = [
-  { id: cryptoRandomId(), dir: "in", text: firstMessage, ts: new Date(), reaction: "" }
+  { id: cryptoRandomId(), dir: "in",  text: firstMessage, ts: now, reaction: "" }
 ];
 
 function renderThread(){
@@ -550,23 +525,29 @@ function renderThread(){
 
   const divider = document.createElement("div");
   divider.className = "time";
-  divider.textContent = formatDivider(messages[0].ts);
+  divider.textContent = formatDivider(messages[0]?.ts || new Date());
   threadEl.appendChild(divider);
 
-  const row = document.createElement("div");
-  row.className = "row in";
+  for (const m of messages){
+    const row = document.createElement("div");
+    row.className = `row ${m.dir}`;
 
-  const bubble = document.createElement("div");
-  bubble.className = "bubble in";
-  bubble.dataset.id = messages[0].id;
-  bubble.textContent = messages[0].text;
+    const bubble = document.createElement("div");
+    bubble.className = `bubble ${m.dir}`;
+    bubble.dataset.id = m.id;
+    bubble.textContent = m.text;
 
-  const reaction = document.createElement("div");
-  reaction.className = "reaction";
-  bubble.appendChild(reaction);
+    const reaction = document.createElement("div");
+    reaction.className = "reaction";
+    if (m.reaction){
+      reaction.textContent = m.reaction;
+      reaction.style.display = "inline-flex";
+    }
+    bubble.appendChild(reaction);
 
-  row.appendChild(bubble);
-  threadEl.appendChild(row);
+    row.appendChild(bubble);
+    threadEl.appendChild(row);
+  }
 }
 
 function scrollToBottom(){
@@ -574,7 +555,7 @@ function scrollToBottom(){
   chat.scrollTop = chat.scrollHeight;
 }
 
-/* typing then show */
+/* typing then show first message */
 const typingRow = document.getElementById('typingRow');
 typingRow.style.display = 'flex';
 
@@ -585,10 +566,48 @@ setTimeout(() => {
   setTimeout(() => ta.focus(), 150);
 }, 450);
 
-/* tapback for the one bubble */
+/* =======================
+   SEND: show outgoing bubble + still POST to Make
+======================= */
+const form = document.getElementById("smsForm");
+
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const text = (ta.value || "").trim();
+  if (!text) return;
+
+  // Show outgoing bubble instantly
+  messages.push({ id: cryptoRandomId(), dir: "out", text, ts: new Date(), reaction: "" });
+  renderThread();
+  scrollToBottom();
+
+  // Clear input
+  ta.value = "";
+  ta.style.height = "auto";
+
+  // POST to Make in background
+  try {
+    const fd = new FormData(form);
+    fd.set("body", text); // ensure body is what we sent
+
+    await fetch(form.action, {
+      method: "POST",
+      body: fd,
+      mode: "no-cors" // avoids CORS issues; Make still receives it
+    });
+  } catch (err) {
+    // If fetch fails, keep bubble (still looks sent)
+    // You can optionally show an error toast here if you want.
+    console.error(err);
+  }
+});
+
+/* =======================
+   TAPBACK (LONG PRESS) — works for both bubbles
+======================= */
 const overlay = document.getElementById("overlay");
 const tapback = document.getElementById("tapback");
-
 let pressTimer = null;
 let activeBubbleId = null;
 
@@ -610,19 +629,14 @@ overlay.addEventListener("click", closeTapback);
 
 tapback.addEventListener("click", (e) => {
   const btn = e.target.closest("button");
-  if (!btn) return;
+  if (!btn || !activeBubbleId) return;
+
   const reaction = btn.getAttribute("data-reaction") || "";
-
-  if (!activeBubbleId) return;
-
-  messages[0].reaction = reaction;
-  renderThread();
-
-  const bubble = threadEl.querySelector(`.bubble[data-id="${activeBubbleId}"]`);
-  if (bubble){
-    const badge = bubble.querySelector(".reaction");
-    badge.textContent = reaction;
-    badge.style.display = reaction ? "inline-flex" : "none";
+  const msgObj = messages.find(x => x.id === activeBubbleId);
+  if (msgObj){
+    msgObj.reaction = reaction;
+    renderThread();
+    scrollToBottom();
   }
   closeTapback();
 });
