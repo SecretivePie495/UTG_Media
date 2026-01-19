@@ -221,6 +221,58 @@ const from = p.get('from') || '';
 const sid = p.get('sid') || '';
 const carrier = p.get('carrier') || '';
 const threadRaw = p.get('thread') || '';
+const newMsg = p.get('msg') || '';
+
+/* Parse previous conversation (thread=) */
+function parseThreadText(raw){
+  if (!raw) return [];
+  return raw.split(/\r?\n/)
+    .map(s => s.trim())
+    .filter(Boolean)
+    .map(line => {
+      const idx = line.indexOf(":");
+      if (idx === -1) return { dir:"in", speaker:"Us", text:line };
+
+      const speaker = line.slice(0, idx).trim();
+      const text = line.slice(idx + 1).trim();
+      const dir = speaker.toLowerCase() === "us" ? "in" : "out";
+
+      return { dir, speaker, text };
+    });
+}
+
+/* Build final message array */
+const messages = [];
+
+// Always add the default first message
+messages.push({
+  id: cryptoRandomId(),
+  dir:"in",
+  speaker:"Us",
+  text:firstMessage,
+});
+
+// Add previous conversation from `thread=`
+const parsed = parseThreadText(threadRaw);
+for (const m of parsed){
+  messages.push({
+    id: cryptoRandomId(),
+    dir:m.dir,
+    speaker:m.speaker,
+    text:m.text
+  });
+}
+
+// Add new message from `msg=`
+if (newMsg.trim()){
+  messages.push({
+    id: cryptoRandomId(),
+    dir:"out",              // the new message is from the user
+    speaker:name || "User",
+    text:newMsg.trim()
+  });
+}
+
 
 const safeName = name ? name : "there";
 
