@@ -99,13 +99,6 @@ body{
   height:calc(100dvh - 140px);
 }
 
-.time{
-  text-align:center;
-  font-size:12px;
-  color:var(--muted);
-  margin:16px 0 8px;
-}
-
 .row{display:flex;margin:10px 0}
 .row.in{justify-content:flex-start}
 .row.out{justify-content:flex-end}
@@ -123,6 +116,7 @@ body{
   font-size:16px;
   line-height:1.34;
   box-shadow:0 2px 12px rgba(0,0,0,.08);
+  white-space:pre-wrap;
 }
 .bubble.in{
   background:var(--in);
@@ -211,6 +205,39 @@ const DEFAULTS = {
 };
 
 /* ===========================
+   HELPERS
+=========================== */
+function cryptoRandomId(){
+  try{
+    const arr = new Uint32Array(2);
+    crypto.getRandomValues(arr);
+    return arr[0].toString(16)+arr[1].toString(16);
+  }catch(e){
+    return Math.random().toString(16).slice(2);
+  }
+}
+
+function parseThreadText(raw){
+  if (!raw) return [];
+  return raw.split(/\r?\n/)
+    .map(s => s.trim())
+    .filter(Boolean)
+    .map(line => {
+      const idx = line.indexOf(":");
+      if (idx === -1) return { dir:"in", speaker:"Us", text: line };
+
+      const speaker = line.slice(0, idx).trim();
+      const text = line.slice(idx + 1).trim();
+      if (!text) return null;
+
+      // Us = your business (left). Everyone else = contact (right).
+      const dir = speaker.toLowerCase() === "us" ? "in" : "out";
+      return { dir, speaker, text };
+    })
+    .filter(Boolean);
+}
+
+/* ===========================
    READ URL PARAMS
 =========================== */
 const p = new URLSearchParams(location.search);
@@ -223,90 +250,15 @@ const carrier = p.get('carrier') || '';
 const threadRaw = p.get('thread') || '';
 const newMsg = p.get('msg') || '';
 
-/* Parse previous conversation (thread=) */
-function parseThreadText(raw){
-  if (!raw) return [];
-  return raw.split(/\r?\n/)
-    .map(s => s.trim())
-    .filter(Boolean)
-    .map(line => {
-      const idx = line.indexOf(":");
-      if (idx === -1) return { dir:"in", speaker:"Us", text:line };
-
-      const speaker = line.slice(0, idx).trim();
-      const text = line.slice(idx + 1).trim();
-      const dir = speaker.toLowerCase() === "us" ? "in" : "out";
-
-      return { dir, speaker, text };
-    });
-}
-
-/* Build final message array */
-const messages = [];
-
-// Always add the default first message
-messages.push({
-  id: cryptoRandomId(),
-  dir:"in",
-  speaker:"Us",
-  text:firstMessage,
-});
-
-// Add previous conversation from `thread=`
-const parsed = parseThreadText(threadRaw);
-for (const m of parsed){
-  messages.push({
-    id: cryptoRandomId(),
-    dir:m.dir,
-    speaker:m.speaker,
-    text:m.text
-  });
-}
-
-// Add new message from `msg=`
-if (newMsg.trim()){
-  messages.push({
-    id: cryptoRandomId(),
-    dir:"out",              // the new message is from the user
-    speaker:name || "User",
-    text:newMsg.trim()
-  });
-}
-
-
-const safeName = name ? name : "there";
+const safeName = name.trim() ? name.trim() : "there";
+const firstMessage = DEFAULTS.firstMsg.replaceAll("{{name}}", safeName);
 
 /* ===========================
-   BUILD FIRST MESSAGE
-=========================== */
-let firstMessage = DEFAULTS.firstMsg.replaceAll("{{name}}", safeName);
-
-/* ===========================
-   PARSE FULL THREAD
-=========================== */
-function parseThreadText(raw){
-  if (!raw) return [];
-  return raw.split(/\r?\n/)
-    .map(s => s.trim())
-    .filter(Boolean)
-    .map(line => {
-      const idx = line.indexOf(":");
-      if (idx === -1){
-        return { dir:"in", speaker:"Us", text:line };
-      }
-      const speaker = line.slice(0, idx).trim();
-      const text = line.slice(idx + 1).trim();
-      const dir = speaker.toLowerCase() === "us" ? "in" : "out";
-      return { dir, speaker, text };
-    });
-}
-
-/* ===========================
-   BUILD MESSAGE ARRAY
+   BUILD MESSAGES
 =========================== */
 const messages = [];
 
-// Default first message ALWAYS shows
+// 1) Default first message ALWAYS
 messages.push({
   id: cryptoRandomId(),
   dir:"in",
@@ -314,32 +266,31 @@ messages.push({
   text:firstMessage
 });
 
-// Then add full convo
+// 2) Previous history from thread=
 const parsed = parseThreadText(threadRaw);
 for (const m of parsed){
+  messages.push({ id: cryptoRandomId(), dir:m.dir, speaker:m.speaker, text:m.text });
+}
+
+// 3) Newest message from msg= (append at bottom)
+if (newMsg.trim()){
   messages.push({
     id: cryptoRandomId(),
-    dir:m.dir,
-    speaker:m.speaker,
-    text:m.text
+    dir:"out",
+    speaker: name.trim() || "Contact",
+    text: newMsg.trim()
   });
 }
 
 /* ===========================
-   RENDER THREAD
+   RENDER
 =========================== */
-function cryptoRandomId(){
-  const arr = new Uint32Array(2);
-  crypto.getRandomValues(arr);
-  return arr[0].toString(16)+arr[1].toString(16);
-}
-
 function renderThread(){
   const thread = document.getElementById("thread");
   thread.innerHTML = "";
 
   for (const m of messages){
-    if (m.dir === "out" && m.speaker.toLowerCase() !== "us"){
+    if (m.dir === "out" && m.speaker && m.speaker.toLowerCase() !== "us"){
       const sp = document.createElement("div");
       sp.className = "speaker";
       sp.textContent = m.speaker;
@@ -357,11 +308,10 @@ function renderThread(){
     thread.appendChild(row);
   }
 
-  // scroll
   setTimeout(() => {
     const chat = document.getElementById("chat");
     chat.scrollTop = chat.scrollHeight;
-  }, 50);
+  }, 30);
 }
 
 /* ===========================
