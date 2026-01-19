@@ -25,7 +25,6 @@
   --safe-bottom: env(safe-area-inset-bottom);
   --safe-top: env(safe-area-inset-top);
 }
-
 @media (prefers-color-scheme: dark){
   :root{
     --bg:#000;
@@ -39,7 +38,6 @@
     --shadow2:0 8px 20px rgba(0,0,0,.35);
   }
 }
-
 *{box-sizing:border-box}
 html,body{height:100%}
 body{
@@ -199,6 +197,7 @@ body{
   user-select:none;
   -webkit-user-select:none;
   -webkit-touch-callout:none;
+  white-space:pre-wrap;
 }
 @keyframes pop{to{transform:translateY(0);opacity:1}}
 .bubble.in{background:var(--in);border-bottom-left-radius:7px}
@@ -440,8 +439,8 @@ textarea{
 
 <script>
 /* =======================
-   CONFIG / TEMPLATE
-   - DEFAULT always stays as the first bubble
+   CONFIG
+   - Default stays first ALWAYS
 ======================= */
 const DEFAULTS = {
   firstMsg: "Hey {{name}}, this is Bella with Custom Solar. We noticed a solar permit was submitted in Dallas for your home. Are you fully up and running with your solar system (PTO + monitoring app)? If you’re good to go, awesome. If not, or if anything feels incomplete, I’m happy to help you figure out the next step."
@@ -476,12 +475,12 @@ const from = p.get('from') || '';
 const sid = p.get('sid') || '';
 const carrier = p.get('carrier') || '';
 
-/* IMPORTANT:
-   - Default message is ALWAYS first.
-   - URL response becomes the *reply bubble*.
-   - Use msg= (or reply=) to preload a user response bubble.
+/* Thread input options:
+   - thread= : multi-line "Udo:Text" / "Us:Text"
+   - msg= or reply= : a single one-off reply bubble
 */
-const urlReply = (p.get('msg') || p.get('reply') || '').trim();
+const threadRaw = (p.get('thread') || "").trim();
+const urlReply  = (p.get('msg') || p.get('reply') || "").trim();
 
 const safeName = name.trim() ? name.trim() : "there";
 const firstMessage = DEFAULTS.firstMsg.replaceAll("{{name}}", safeName);
@@ -496,10 +495,36 @@ document.getElementById('sidInput').value = sid;
 document.getElementById('carrierInput').value = carrier;
 
 /* =======================
-   THREAD RENDERING (2 bubbles on load)
+   PARSE THREAD TEXT (Google Sheets format)
+   Example lines:
+     Udo:Hello
+     Us:Got it
+======================= */
+function parseThreadText(raw){
+  if (!raw) return [];
+  return raw
+    .split(/\r?\n/)
+    .map(s => s.trim())
+    .filter(Boolean)
+    .map(line => {
+      const idx = line.indexOf(":");
+      if (idx === -1) return { dir: "in", text: line };
+
+      const speaker = line.slice(0, idx).trim().toLowerCase();
+      const text = line.slice(idx + 1).trim();
+      if (!text) return null;
+
+      // Udo = user bubble (outgoing), Us = your bubble (incoming)
+      const dir = (speaker === "udo") ? "out" : "in";
+      return { dir, text };
+    })
+    .filter(Boolean);
+}
+
+/* =======================
+   THREAD RENDERING
 ======================= */
 const threadEl = document.getElementById('thread');
-const now = new Date();
 
 function cryptoRandomId(){
   if (window.crypto?.getRandomValues){
@@ -520,13 +545,23 @@ function formatDivider(d){
   return `${day} ${formatTime(d)}`;
 }
 
-const messages = [
-  { id: cryptoRandomId(), dir: "in",  text: firstMessage, ts: now, reaction: "" }
-];
+const messages = [];
+const now = new Date();
 
-// If URL provides a reply, show it as the user's outgoing bubble
-if (urlReply) {
-  messages.push({ id: cryptoRandomId(), dir: "out", text: urlReply, ts: new Date(now.getTime() + 15 * 1000), reaction: "" });
+// Always add default first message at the top
+messages.push({ id: cryptoRandomId(), dir: "in", text: firstMessage, ts: now, reaction: "" });
+
+// If thread= exists, append the entire thread
+const parsed = parseThreadText(threadRaw);
+let cursor = now.getTime();
+for (const m of parsed){
+  cursor += 25 * 1000; // spread them out slightly
+  messages.push({ id: cryptoRandomId(), dir: m.dir, text: m.text, ts: new Date(cursor), reaction: "" });
+}
+
+// If no thread= but msg/reply exists, show it as the reply bubble
+if (!parsed.length && urlReply){
+  messages.push({ id: cryptoRandomId(), dir: "out", text: urlReply, ts: new Date(now.getTime() + 25*1000), reaction: "" });
 }
 
 function renderThread(){
@@ -586,25 +621,18 @@ form.addEventListener("submit", async (e) => {
   const text = (ta.value || "").trim();
   if (!text) return;
 
-  // Show outgoing bubble instantly
   messages.push({ id: cryptoRandomId(), dir: "out", text, ts: new Date(), reaction: "" });
   renderThread();
   scrollToBottom();
 
-  // Clear input
   ta.value = "";
   ta.style.height = "auto";
 
-  // POST to Make in background
   try {
     const fd = new FormData(form);
     fd.set("body", text);
 
-    await fetch(form.action, {
-      method: "POST",
-      body: fd,
-      mode: "no-cors"
-    });
+    await fetch(form.action, { method:"POST", body: fd, mode:"no-cors" });
   } catch (err) {
     console.error(err);
   }
