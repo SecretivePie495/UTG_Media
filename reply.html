@@ -15,12 +15,9 @@
   --text:#111;
   --muted:rgba(60,60,67,.65);
 
-  --in:#e5e5ea;
-  --out1:#0a84ff;
-  --out2:#007aff;
-
-  --shadow:0 14px 40px rgba(0,0,0,.14);
-  --shadow2:0 8px 20px rgba(0,0,0,.12);
+  --grey:#e5e5ea; /* CONTACT */
+  --blue1:#0a84ff; /* US */
+  --blue2:#007aff;
 
   --safe-bottom: env(safe-area-inset-bottom);
   --safe-top: env(safe-area-inset-top);
@@ -33,155 +30,118 @@
     --border:rgba(84,84,88,.35);
     --text:#fff;
     --muted:rgba(235,235,245,.65);
-    --in:#2c2c2e;
-
-    --shadow:0 14px 40px rgba(0,0,0,.45);
-    --shadow2:0 8px 20px rgba(0,0,0,.35);
+    --grey:#2c2c2e;
   }
 }
 
 *{box-sizing:border-box}
-html,body{height:100%}
 body{
   margin:0;
-  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",Helvetica,Arial;
+  font-family:-apple-system,BlinkMacSystemFont;
   background:var(--bg);
   color:var(--text);
-  -webkit-font-smoothing:antialiased;
-  overflow-x:hidden;
 }
 
-/* iPhone visual frame */
-.phone{min-height:100%;display:flex;justify-content:center;padding:18px 12px}
+.phone{display:flex;justify-content:center;padding:18px 12px}
 .wrap{
   width:100%;
   max-width:430px;
   min-height:calc(100dvh - 36px);
-  background:var(--bg);
   border-radius:34px;
   overflow:hidden;
-  box-shadow:var(--shadow);
-  position:relative;
-  border:1px solid rgba(120,120,128,.22);
-}
-@media (max-width:520px){
-  .phone{padding:0}
-  .wrap{max-width:100%;min-height:100dvh;border-radius:0;box-shadow:none;border:none}
+  background:var(--bg);
 }
 
 .header{
-  position:sticky; top:0; z-index:20;
-  backdrop-filter: blur(18px) saturate(180%);
+  position:sticky;top:0;z-index:10;
   background:var(--header);
+  backdrop-filter:blur(18px);
   border-bottom:1px solid var(--border);
 }
 .statusbar{height:calc(10px + var(--safe-top))}
-.header-inner{padding:10px 14px 12px;display:flex;align-items:center;gap:10px}
+.header-inner{
+  padding:10px 14px;
+  display:flex;align-items:center;gap:10px;
+}
 
 .avatar{
-  width:38px;height:38px;border-radius:19px;
+  width:38px;height:38px;border-radius:50%;
   background:linear-gradient(135deg,#0a84ff,#ff2d55);
-  box-shadow:var(--shadow2);
-  flex:0 0 auto;
 }
 
-.title strong{
-  font-size:16px;font-weight:800;white-space:nowrap;overflow:hidden;
-}
-.title span{
-  font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden
-}
+.title strong{font-size:16px;font-weight:700}
+.title span{font-size:12px;color:var(--muted)}
 
 .chat{
-  padding:20px 12px 180px; /* will be overridden dynamically by JS */
-  background:var(--bg);
-  overflow:auto;
-  height:calc(100dvh - 140px); /* will be overridden dynamically by JS */
+  padding:20px 12px 160px;
+  overflow-y:auto;
 }
 
 .row{display:flex;margin:10px 0}
-.row.in{justify-content:flex-start}
-.row.out{justify-content:flex-end}
-
-.speaker{
-  font-size:12px;color:var(--muted);
-  margin:0 10px 4px;
-}
-.row.out .speaker{text-align:right}
+.row.in{justify-content:flex-start}   /* CONTACT = GREY LEFT */
+.row.out{justify-content:flex-end}    /* US = BLUE RIGHT */
 
 .bubble{
   max-width:85%;
   padding:12px 14px;
   border-radius:20px;
   font-size:16px;
-  line-height:1.34;
-  box-shadow:0 2px 12px rgba(0,0,0,.08);
+  line-height:1.35;
   white-space:pre-wrap;
 }
+
+/* CONTACT LEFT */
 .bubble.in{
-  background:var(--in);
+  background:var(--grey);
+  color:var(--text);
   border-bottom-left-radius:7px;
 }
+
+/* US RIGHT */
 .bubble.out{
-  background:linear-gradient(135deg,var(--out1),var(--out2));
+  background:linear-gradient(135deg,var(--blue1),var(--blue2));
   color:#fff;
   border-bottom-right-radius:7px;
 }
 
 .composer{
-  position:fixed;left:0;right:0;bottom:0;z-index:40;
+  position:fixed;left:0;right:0;bottom:0;
   background:var(--header);
-  backdrop-filter: blur(18px) saturate(180%);
   border-top:1px solid var(--border);
+  backdrop-filter:blur(18px);
   padding-bottom:calc(10px + var(--safe-bottom));
 }
+
 .composer-inner{
-  max-width:430px;margin:0 auto;
+  max-width:430px;margin:auto;
   padding:12px;
-  display:flex;
-  align-items:flex-end; /* important: keeps button aligned when textarea grows */
-  gap:10px;
+  display:flex;align-items:flex-end;gap:10px;
 }
 
-/* UPDATED: iMessage-like growing input */
 .input{
   flex:1;
-  border:1px solid var(--border);
   background:rgba(255,255,255,.55);
-
-  border-radius:22px;       /* not a full pill */
+  border-radius:22px;
   padding:10px 12px;
-  display:flex;
-  align-items:flex-end;
 }
-
-/* dark mode tweak for the input background so it's not too bright */
 @media (prefers-color-scheme: dark){
-  .input{ background:rgba(44,44,46,.70); }
+  .input{background:rgba(44,44,46,.7)}
 }
 
 textarea{
   width:100%;
-  border:none;
-  outline:none;
-  font-size:16px;
-  resize:none;
-  background:transparent;
-  color:var(--text);
-
-  line-height:1.35;
+  border:none;outline:none;resize:none;
+  background:transparent;color:var(--text);
   min-height:22px;
-  max-height:140px;         /* ~6-7 lines */
-  overflow:auto;
-
-  padding:0;
-  margin:0;
+  max-height:140px;
+  font-size:16px;
 }
 
 .btn{
-  width:42px;height:42px;border:none;border-radius:999px;
+  width:42px;height:42px;
+  border:none;border-radius:50%;
   background:#007aff;color:#fff;
-  display:grid;place-items:center;
+  font-size:18px;
 }
 </style>
 </head>
@@ -195,7 +155,7 @@ textarea{
       <div class="header-inner">
         <div class="avatar"></div>
         <div class="title">
-          <strong id="contactName">Loading…</strong>
+          <strong id="contactName">Loading…</strong><br>
           <span id="contactTo"></span>
         </div>
       </div>
@@ -216,186 +176,109 @@ textarea{
     <input type="hidden" name="carrier" id="carrierInput">
 
     <div class="input">
-      <textarea name="body" rows="1" placeholder="iMessage…"></textarea>
+      <textarea name="body" placeholder="iMessage…"></textarea>
     </div>
-
-    <button class="btn" type="submit">↑</button>
+    <button class="btn">↑</button>
   </div>
 </form>
 
 <script>
-/* ===========================
+/* ======================
    DEFAULT FIRST MESSAGE
-=========================== */
+====================== */
 const DEFAULTS = {
-  firstMsg: "hey {{name}}, this is Bella — random question: who handles your lead follow-ups over text? you or someone on the team?"
+  firstMsg:
+`Hey there, this is Bella with Custom Solar. We noticed a solar permit was submitted in Dallas for your home. Are you fully up and running with your solar system (PTO + monitoring app)? If you’re good to go, awesome. If not, or if anything feels incomplete, I’m happy to help you figure out the next step.`
 };
 
-/* ===========================
-   HELPERS
-=========================== */
-function cryptoRandomId(){
-  try{
-    const arr = new Uint32Array(2);
-    crypto.getRandomValues(arr);
-    return arr[0].toString(16)+arr[1].toString(16);
-  }catch(e){
-    return Math.random().toString(16).slice(2);
-  }
-}
-
-function parseThreadText(raw){
-  if (!raw) return [];
-  return raw.split(/\r?\n/)
-    .map(s => s.trim())
-    .filter(Boolean)
-    .map(line => {
-      const idx = line.indexOf(":");
-      if (idx === -1) return { dir:"in", speaker:"Us", text: line };
-
-      const speaker = line.slice(0, idx).trim();
-      const text = line.slice(idx + 1).trim();
-      if (!text) return null;
-
-      // Us = your business (left). Everyone else = contact (right).
-      const dir = speaker.toLowerCase() === "us" ? "in" : "out";
-      return { dir, speaker, text };
-    })
-    .filter(Boolean);
-}
-
-/* ===========================
-   READ URL PARAMS
-=========================== */
+/* ======================
+   URL PARAMS
+====================== */
 const p = new URLSearchParams(location.search);
 
-const name = p.get('name') || '';
-const to = p.get('to') || '';
-const from = p.get('from') || '';
-const sid = p.get('sid') || '';
-const carrier = p.get('carrier') || '';
-const threadRaw = p.get('thread') || '';
-const newMsg = p.get('msg') || '';
+const name = p.get("name") || "";
+const to = p.get("to") || "";
+const from = p.get("from") || "";
+const sid = p.get("sid") || "";
+const carrier = p.get("carrier") || "";
+const threadRaw = p.get("thread") || "";
+const newMsg = p.get("msg") || "";
 
-const safeName = name.trim() ? name.trim() : "there";
-const firstMessage = DEFAULTS.firstMsg.replaceAll("{{name}}", safeName);
-
-/* ===========================
-   BUILD MESSAGES
-=========================== */
-const messages = [];
-
-// 1) Default first message ALWAYS
-messages.push({
-  id: cryptoRandomId(),
-  dir:"in",
-  speaker:"Us",
-  text:firstMessage
-});
-
-// 2) Previous history from thread=
-const parsed = parseThreadText(threadRaw);
-for (const m of parsed){
-  messages.push({ id: cryptoRandomId(), dir:m.dir, speaker:m.speaker, text:m.text });
+/* ======================
+   PARSE THREAD
+====================== */
+function parseThread(raw){
+  if(!raw) return [];
+  return raw.split(/\r?\n/)
+    .map(l=>l.trim())
+    .filter(Boolean)
+    .map(l=>{
+      const i=l.indexOf(":");
+      if(i===-1) return {speaker:"contact", text:l};
+      return {
+        speaker:l.slice(0,i).trim(),
+        text:l.slice(i+1).trim()
+      };
+    });
 }
 
-// 3) Newest message from msg= (append at bottom)
-if (newMsg.trim()){
+/* ======================
+   BUILD MESSAGE ARRAY
+====================== */
+const messages = [];
+
+// FIRST message = US = RIGHT = BLUE
+messages.push({ dir:"out", speaker:"Us", text:DEFAULTS.firstMsg });
+
+// HISTORY from ?thread=
+parseThread(threadRaw).forEach(m=>{
+  const isUs = m.speaker.toLowerCase()==="us";
   messages.push({
-    id: cryptoRandomId(),
-    dir:"out",
-    speaker: name.trim() || "Contact",
-    text: newMsg.trim()
+    dir: isUs ? "out" : "in",
+    speaker:m.speaker,
+    text:m.text
+  });
+});
+
+// NEW incoming message from ?msg= = CONTACT
+if(newMsg.trim()){
+  messages.push({
+    dir:"in",
+    speaker:name || "Contact",
+    text:newMsg.trim()
   });
 }
 
-/* ===========================
+/* ======================
    RENDER
-=========================== */
-function renderThread(){
-  const thread = document.getElementById("thread");
-  thread.innerHTML = "";
+====================== */
+const thread = document.getElementById("thread");
+messages.forEach(m=>{
+  const row=document.createElement("div");
+  row.className=`row ${m.dir}`;
+  const bubble=document.createElement("div");
+  bubble.className=`bubble ${m.dir}`;
+  bubble.textContent=m.text;
+  row.appendChild(bubble);
+  thread.appendChild(row);
+});
 
-  for (const m of messages){
-    if (m.dir === "out" && m.speaker && m.speaker.toLowerCase() !== "us"){
-      const sp = document.createElement("div");
-      sp.className = "speaker";
-      sp.textContent = m.speaker;
-      thread.appendChild(sp);
-    }
+/* FILL HIDDEN FIELDS + HEADER */
+document.getElementById("contactName").textContent=name;
+document.getElementById("contactTo").textContent=to;
+document.getElementById("toInput").value=to;
+document.getElementById("fromInput").value=from;
+document.getElementById("sidInput").value=sid;
+document.getElementById("carrierInput").value=carrier;
 
-    const row = document.createElement("div");
-    row.className = `row ${m.dir}`;
+/* AUTO-GROW TEXTAREA */
+const ta=document.querySelector("textarea");
+const chat=document.getElementById("chat");
 
-    const bubble = document.createElement("div");
-    bubble.className = `bubble ${m.dir}`;
-    bubble.textContent = m.text;
-
-    row.appendChild(bubble);
-    thread.appendChild(row);
-  }
-
-  setTimeout(() => {
-    const chat = document.getElementById("chat");
-    chat.scrollTop = chat.scrollHeight;
-  }, 30);
-}
-
-/* ===========================
-   INIT HEADER + HIDDEN INPUTS
-=========================== */
-document.getElementById('contactName').textContent = name || "Unknown";
-document.getElementById('contactTo').textContent = to;
-document.getElementById('toInput').value = to;
-document.getElementById('fromInput').value = from;
-document.getElementById('sidInput').value = sid;
-document.getElementById('carrierInput').value = carrier;
-
-renderThread();
-
-/* ===========================
-   AUTO-GROW TEXTAREA (iMessage)
-=========================== */
-const ta = document.querySelector('textarea[name="body"]');
-const chatEl = document.getElementById("chat");
-const composerEl = document.querySelector(".composer");
-const headerEl = document.querySelector(".header");
-
-function setChatBottomPadding(){
-  const composerH = composerEl.getBoundingClientRect().height;
-  const headerH = headerEl.getBoundingClientRect().height;
-
-  // prevent bubbles from hiding behind composer
-  chatEl.style.paddingBottom = (composerH + 16) + "px";
-  // keep chat height aligned with viewport (sticky header + fixed composer)
-  chatEl.style.height = `calc(100dvh - ${headerH + composerH}px)`;
-}
-
-function autoGrow(){
-  // reset then expand to content, capped
-  ta.style.height = "auto";
-  const max = 140; // keep synced with CSS max-height
-  ta.style.height = Math.min(ta.scrollHeight, max) + "px";
-
-  setChatBottomPadding();
-  // keep view pinned near bottom while typing
-  chatEl.scrollTop = chatEl.scrollHeight;
-}
-
-ta.addEventListener("input", autoGrow);
-window.addEventListener("resize", () => { setChatBottomPadding(); autoGrow(); });
-
-// run once after layout settles
-setTimeout(() => { setChatBottomPadding(); autoGrow(); }, 60);
-
-/* ===========================
-   OPTIONAL: Cmd/Ctrl+Enter to send, Enter = newline
-=========================== */
-ta.addEventListener("keydown", (e) => {
-  if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
-    e.preventDefault();
-    ta.form.requestSubmit();
-  }
+ta.addEventListener("input",()=>{
+  ta.style.height="auto";
+  ta.style.height=Math.min(ta.scrollHeight,140)+"px";
+  chat.scrollTop=999999;
 });
 </script>
 </body>
