@@ -93,10 +93,10 @@ body{
 }
 
 .chat{
-  padding:20px 12px 180px;
+  padding:20px 12px 180px; /* will be overridden dynamically by JS */
   background:var(--bg);
   overflow:auto;
-  height:calc(100dvh - 140px);
+  height:calc(100dvh - 140px); /* will be overridden dynamically by JS */
 }
 
 .row{display:flex;margin:10px 0}
@@ -138,17 +138,44 @@ body{
 .composer-inner{
   max-width:430px;margin:0 auto;
   padding:12px;
-  display:flex;align-items:flex-end;gap:10px;
+  display:flex;
+  align-items:flex-end; /* important: keeps button aligned when textarea grows */
+  gap:10px;
 }
 
+/* UPDATED: iMessage-like growing input */
 .input{
-  flex:1;border:1px solid var(--border);
-  border-radius:999px;padding:10px 12px;
+  flex:1;
+  border:1px solid var(--border);
   background:rgba(255,255,255,.55);
+
+  border-radius:22px;       /* not a full pill */
+  padding:10px 12px;
+  display:flex;
+  align-items:flex-end;
 }
+
+/* dark mode tweak for the input background so it's not too bright */
+@media (prefers-color-scheme: dark){
+  .input{ background:rgba(44,44,46,.70); }
+}
+
 textarea{
-  width:100%;border:none;outline:none;font-size:16px;resize:none;
-  background:transparent;color:var(--text);
+  width:100%;
+  border:none;
+  outline:none;
+  font-size:16px;
+  resize:none;
+  background:transparent;
+  color:var(--text);
+
+  line-height:1.35;
+  min-height:22px;
+  max-height:140px;         /* ~6-7 lines */
+  overflow:auto;
+
+  padding:0;
+  margin:0;
 }
 
 .btn{
@@ -181,7 +208,7 @@ textarea{
   </div>
 </div>
 
-<form class="composer" method="POST" action="https://hook.us1.make.com/9bd7p4t1l3mbq8qr7uqx2c28g3whgbu3">
+<form class="composer" method="POST" action="https://hook.us1.make.com/ccjgn5ufsliyu7811dulrvhtxq9uehr6">
   <div class="composer-inner">
     <input type="hidden" name="to" id="toInput">
     <input type="hidden" name="from" id="fromInput">
@@ -201,7 +228,7 @@ textarea{
    DEFAULT FIRST MESSAGE
 =========================== */
 const DEFAULTS = {
-  firstMsg: "Hey {{name}}, this is Bella with Custom Solar. We noticed a solar permit was submitted in Dallas for your home. Are you fully up and running with your solar system (PTO + monitoring app)? If you’re good to go, awesome. If not, or if anything feels incomplete, I’m happy to help you figure out the next step."
+  firstMsg: "Hey there, this is Bella with Custom Solar. We noticed a solar permit was submitted in Dallas for your home. Are you fully up and running with your solar system (PTO + monitoring app)? If you’re good to go, awesome. If not, or if anything feels incomplete, I’m happy to help you figure out the next step."
 };
 
 /* ===========================
@@ -315,7 +342,7 @@ function renderThread(){
 }
 
 /* ===========================
-   INIT
+   INIT HEADER + HIDDEN INPUTS
 =========================== */
 document.getElementById('contactName').textContent = name || "Unknown";
 document.getElementById('contactTo').textContent = to;
@@ -325,6 +352,51 @@ document.getElementById('sidInput').value = sid;
 document.getElementById('carrierInput').value = carrier;
 
 renderThread();
+
+/* ===========================
+   AUTO-GROW TEXTAREA (iMessage)
+=========================== */
+const ta = document.querySelector('textarea[name="body"]');
+const chatEl = document.getElementById("chat");
+const composerEl = document.querySelector(".composer");
+const headerEl = document.querySelector(".header");
+
+function setChatBottomPadding(){
+  const composerH = composerEl.getBoundingClientRect().height;
+  const headerH = headerEl.getBoundingClientRect().height;
+
+  // prevent bubbles from hiding behind composer
+  chatEl.style.paddingBottom = (composerH + 16) + "px";
+  // keep chat height aligned with viewport (sticky header + fixed composer)
+  chatEl.style.height = `calc(100dvh - ${headerH + composerH}px)`;
+}
+
+function autoGrow(){
+  // reset then expand to content, capped
+  ta.style.height = "auto";
+  const max = 140; // keep synced with CSS max-height
+  ta.style.height = Math.min(ta.scrollHeight, max) + "px";
+
+  setChatBottomPadding();
+  // keep view pinned near bottom while typing
+  chatEl.scrollTop = chatEl.scrollHeight;
+}
+
+ta.addEventListener("input", autoGrow);
+window.addEventListener("resize", () => { setChatBottomPadding(); autoGrow(); });
+
+// run once after layout settles
+setTimeout(() => { setChatBottomPadding(); autoGrow(); }, 60);
+
+/* ===========================
+   OPTIONAL: Cmd/Ctrl+Enter to send, Enter = newline
+=========================== */
+ta.addEventListener("keydown", (e) => {
+  if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+    e.preventDefault();
+    ta.form.requestSubmit();
+  }
+});
 </script>
 </body>
 </html>
