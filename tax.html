@@ -195,7 +195,7 @@ const from = p.get("from") || "";
 const sid = p.get("sid") || "";
 const carrier = p.get("carrier") || "";
 const threadRaw = p.get("thread") || "";
-const newMsg = p.get("msg") || "";
+const newMsg = decodeURIComponent(p.get("msg") || "").trim();
 const firstOverride = decodeURIComponent(p.get("first") || "").trim();
 
 /* ======================
