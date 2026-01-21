@@ -196,7 +196,7 @@ const sid = p.get("sid") || "";
 const carrier = p.get("carrier") || "";
 const threadRaw = p.get("thread") || "";
 const newMsg = p.get("msg") || "";
-const firstOverride = (p.get("first") || "").trim();
+const firstOverride = decodeURIComponent(p.get("first") || "").trim();
 
 /* ======================
    DEFAULT / OVERRIDE FIRST MESSAGE
