@@ -183,12 +183,6 @@ textarea{
 </form>
 
 <script>
-/* ======================
-   DEFAULT FIRST MESSAGE
-====================== */
-const DEFAULTS = {
-  firstMsg:`Hey {{name}}, this is Bella with Custom Solar. We noticed a solar permit was submitted in Dallas for your home. Are you fully up and running with your solar system (PTO + monitoring app)? If you’re good to go, awesome. If not, or if anything feels incomplete, I’m happy to help you figure out the next step.`
-};
 
 /* ======================
    URL PARAMS
@@ -201,7 +195,14 @@ const from = p.get("from") || "";
 const sid = p.get("sid") || "";
 const carrier = p.get("carrier") || "";
 const threadRaw = p.get("thread") || "";
-const newMsg = p.get("msg") || "";
+const newMsg = decodeURIComponent(p.get("msg") || "").trim();
+const firstOverride = decodeURIComponent(p.get("first") || "").trim();
+
+/* ======================
+   DEFAULT / OVERRIDE FIRST MESSAGE
+====================== */
+const firstMsg = firstOverride ||
+  `Hey ${name || "there"}, this is Bella with Custom Solar. We noticed a solar permit was submitted in Dallas for your home. Are you fully up and running with your solar system (PTO + monitoring app)? If you’re good to go, awesome. If not, or if anything feels incomplete, I’m happy to help you figure out the next step.`;
 
 /* ======================
    PARSE THREAD
@@ -226,8 +227,8 @@ function parseThread(raw){
 ====================== */
 const messages = [];
 
-// FIRST message = US = RIGHT = BLUE
-messages.push({ dir:"out", speaker:"Us", text:DEFAULTS.firstMsg });
+// FIRST message = us/right/blue
+messages.push({ dir:"out", speaker:"Us", text:firstMsg });
 
 // HISTORY from ?thread=
 parseThread(threadRaw).forEach(m=>{
@@ -239,7 +240,7 @@ parseThread(threadRaw).forEach(m=>{
   });
 });
 
-// NEW incoming message from ?msg= = CONTACT
+// NEW incoming message from ?msg=
 if(newMsg.trim()){
   messages.push({
     dir:"in",
@@ -262,7 +263,7 @@ messages.forEach(m=>{
   thread.appendChild(row);
 });
 
-/* FILL HIDDEN FIELDS + HEADER */
+/* FILL HIDDEN INPUTS + HEADER */
 document.getElementById("contactName").textContent=name;
 document.getElementById("contactTo").textContent=to;
 document.getElementById("toInput").value=to;
@@ -280,5 +281,6 @@ ta.addEventListener("input",()=>{
   chat.scrollTop=999999;
 });
 </script>
+
 </body>
 </html>
