@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<title>Messages</title>
+
+<style>
+:root{
+  --bg:#f2f2f7;
+  --header:rgba(255,255,255,.72);
+  --border:rgba(60,60,67,.18);
+  --text:#111;
+  --muted:rgba(60,60,67,.65);
+
+  --grey:#e5e5ea; /* CONTACT */
+  --blue1:#0a84ff; /* US */
+  --blue2:#007aff;
+
+  --safe-bottom: env(safe-area-inset-bottom);
+  --safe-top: env(safe-area-inset-top);
+}
+
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#000;
+    --header:rgba(28,28,30,.70);
+    --border:rgba(84,84,88,.35);
+    --text:#fff;
+    --muted:rgba(235,235,245,.65);
+    --grey:#2c2c2e;
+  }
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont;
+  background:var(--bg);
+  color:var(--text);
+}
+
+.phone{display:flex;justify-content:center;padding:18px 12px}
+.wrap{
+  width:100%;
+  max-width:430px;
+  min-height:calc(100dvh - 36px);
+  border-radius:34px;
+  overflow:hidden;
+  background:var(--bg);
+}
+
+.header{
+  position:sticky;top:0;z-index:10;
+  background:var(--header);
+  backdrop-filter:blur(18px);
+  border-bottom:1px solid var(--border);
+}
+.statusbar{height:calc(10px + var(--safe-top))}
+.header-inner{
+  padding:10px 14px;
+  display:flex;align-items:center;gap:10px;
+}
+
+.avatar{
+  width:38px;height:38px;border-radius:50%;
+  background:linear-gradient(135deg,#0a84ff,#ff2d55);
+}
+
+.title strong{font-size:16px;font-weight:700}
+.title span{font-size:12px;color:var(--muted)}
+
+.chat{
+  padding:20px 12px 160px;
+  overflow-y:auto;
+}
+
+.row{display:flex;margin:10px 0}
+.row.in{justify-content:flex-start}   /* CONTACT = GREY LEFT */
+.row.out{justify-content:flex-end}    /* US = BLUE RIGHT */
+
+.bubble{
+  max-width:85%;
+  padding:12px 14px;
+  border-radius:20px;
+  font-size:16px;
+  line-height:1.35;
+  white-space:pre-wrap;
+}
+
+/* CONTACT LEFT */
+.bubble.in{
+  background:var(--grey);
+  color:var(--text);
+  border-bottom-left-radius:7px;
+}
+
+/* US RIGHT */
+.bubble.out{
+  background:linear-gradient(135deg,var(--blue1),var(--blue2));
+  color:#fff;
+  border-bottom-right-radius:7px;
+}
+
+.composer{
+  position:fixed;left:0;right:0;bottom:0;
+  background:var(--header);
+  border-top:1px solid var(--border);
+  backdrop-filter:blur(18px);
+  padding-bottom:calc(10px + var(--safe-bottom));
+}
+
+.composer-inner{
+  max-width:430px;margin:auto;
+  padding:12px;
+  display:flex;align-items:flex-end;gap:10px;
+}
+
+.input{
+  flex:1;
+  background:rgba(255,255,255,.55);
+  border-radius:22px;
+  padding:10px 12px;
+}
+@media (prefers-color-scheme: dark){
+  .input{background:rgba(44,44,46,.7)}
+}
+
+textarea{
+  width:100%;
+  border:none;outline:none;resize:none;
+  background:transparent;color:var(--text);
+  min-height:22px;
+  max-height:140px;
+  font-size:16px;
+}
+
+.btn{
+  width:42px;height:42px;
+  border:none;border-radius:50%;
+  background:#007aff;color:#fff;
+  font-size:18px;
+}
+</style>
+</head>
+
+<body>
+<div class="phone">
+  <div class="wrap">
+
+    <div class="header">
+      <div class="statusbar"></div>
+      <div class="header-inner">
+        <div class="avatar"></div>
+        <div class="title">
+          <strong id="contactName">Loading…</strong><br>
+          <span id="contactTo"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="chat" id="chat">
+      <div id="thread"></div>
+    </div>
+
+  </div>
+</div>
+
+<form class="composer" method="POST" action="https://hook.us1.make.com/9bd7p4t1l3mbq8qr7uqx2c28g3whgbu3">
+  <div class="composer-inner">
+    <input type="hidden" name="to" id="toInput">
+    <input type="hidden" name="from" id="fromInput">
+    <input type="hidden" name="sid" id="sidInput">
+    <input type="hidden" name="carrier" id="carrierInput">
+
+    <div class="input">
+      <textarea name="body" placeholder="iMessage…"></textarea>
+    </div>
+    <button class="btn">↑</button>
+  </div>
+</form>
+
+<script>
+
+/* ======================
+   URL PARAMS
+====================== */
+const p = new URLSearchParams(location.search);
+
+const name = p.get("name") || "";
+const to = p.get("to") || "";
+const from = p.get("from") || "";
+const sid = p.get("sid") || "";
+const carrier = p.get("carrier") || "";
+const threadRaw = p.get("thread") || "";
+const newMsg = p.get("msg") || "";
+const firstOverride = (p.get("first") || "").trim();
+
+/* ======================
+   DEFAULT / OVERRIDE FIRST MESSAGE
+====================== */
+const firstMsg = firstOverride ||
+  `Hey ${name || "there"}, this is Bella with Custom Solar. We noticed a solar permit was submitted in Dallas for your home. Are you fully up and running with your solar system (PTO + monitoring app)? If you’re good to go, awesome. If not, or if anything feels incomplete, I’m happy to help you figure out the next step.`;
+
+/* ======================
+   PARSE THREAD
+====================== */
+function parseThread(raw){
+  if(!raw) return [];
+  return raw.split(/\r?\n/)
+    .map(l=>l.trim())
+    .filter(Boolean)
+    .map(l=>{
+      const i=l.indexOf(":");
+      if(i===-1) return {speaker:"contact", text:l};
+      return {
+        speaker:l.slice(0,i).trim(),
+        text:l.slice(i+1).trim()
+      };
+    });
+}
+
+/* ======================
+   BUILD MESSAGE ARRAY
+====================== */
+const messages = [];
+
+// FIRST message = us/right/blue
+messages.push({ dir:"out", speaker:"Us", text:firstMsg });
+
+// HISTORY from ?thread=
+parseThread(threadRaw).forEach(m=>{
+  const isUs = m.speaker.toLowerCase()==="us";
+  messages.push({
+    dir: isUs ? "out" : "in",
+    speaker:m.speaker,
+    text:m.text
+  });
+});
+
+// NEW incoming message from ?msg=
+if(newMsg.trim()){
+  messages.push({
+    dir:"in",
+    speaker:name || "Contact",
+    text:newMsg.trim()
+  });
+}
+
+/* ======================
+   RENDER
+====================== */
+const thread = document.getElementById("thread");
+messages.forEach(m=>{
+  const row=document.createElement("div");
+  row.className=`row ${m.dir}`;
+  const bubble=document.createElement("div");
+  bubble.className=`bubble ${m.dir}`;
+  bubble.textContent=m.text;
+  row.appendChild(bubble);
+  thread.appendChild(row);
+});
+
+/* FILL HIDDEN INPUTS + HEADER */
+document.getElementById("contactName").textContent=name;
+document.getElementById("contactTo").textContent=to;
+document.getElementById("toInput").value=to;
+document.getElementById("fromInput").value=from;
+document.getElementById("sidInput").value=sid;
+document.getElementById("carrierInput").value=carrier;
+
+/* AUTO-GROW TEXTAREA */
+const ta=document.querySelector("textarea");
+const chat=document.getElementById("chat");
+
+ta.addEventListener("input",()=>{
+  ta.style.height="auto";
+  ta.style.height=Math.min(ta.scrollHeight,140)+"px";
+  chat.scrollTop=999999;
+});
+</script>
+
+</body>
+</html>
