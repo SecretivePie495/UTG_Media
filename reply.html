@@ -226,18 +226,37 @@ function parseThread(raw){
 ====================== */
 const messages = [];
 
-// FIRST message = US = RIGHT = BLUE
-messages.push({ dir:"out", speaker:"Us", text:DEFAULTS.firstMsg });
+// Only push first default if NO thread & NO new incoming msg
+if(!threadRaw && !newMsg){
+  messages.push({
+    dir:"out",
+    speaker:"Us",
+    text:DEFAULTS.firstMsg
+  });
+}
+
 
 // HISTORY from ?thread=
-parseThread(threadRaw).forEach(m=>{
-  const isUs = m.speaker.toLowerCase()==="us";
+const threadArr = parseThread(threadRaw);
+
+threadArr.forEach((m, index)=>{
+  let dir;
+
+  if(index === 0){
+    // FIRST message in thread = BLUE
+    dir = "out";
+  } else {
+    // Follow normal rules
+    dir = m.speaker.toLowerCase() === "us" ? "out" : "in";
+  }
+
   messages.push({
-    dir: isUs ? "out" : "in",
-    speaker:m.speaker,
-    text:m.text
+    dir,
+    speaker: m.speaker,
+    text: m.text
   });
 });
+
 
 // NEW incoming message from ?msg= = CONTACT
 if(newMsg.trim()){
