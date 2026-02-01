@@ -195,7 +195,22 @@ const DEFAULTS = {
    URL PARAMS
 ====================== */
 const p = new URLSearchParams(location.search);
+function decodeLoose(s){
+  if(!s) return "";
+  // handle + as space (common in querystrings)
+  let out = s.replace(/\+/g, " ");
 
+  // decode once
+  try { out = decodeURIComponent(out); } catch(e){}
+
+  // if it still looks encoded, decode again (double-encoded fix)
+  if (/%[0-9A-Fa-f]{2}/.test(out)) {
+    try { out = decodeURIComponent(out); } catch(e){}
+  }
+
+  return out;
+}
+  
 const name = p.get("name") || "";
 const to = p.get("to") || "";
 const from = p.get("from") || "";
@@ -232,7 +247,7 @@ if(!threadRaw && !newMsg){
   messages.push({
     dir:"out",
     speaker:"Us",
-    text:DEFAULTS.firstMsg
+    text: DEFAULTS.firstMsg.replace("{{name}}", name || "there")
   });
 }
 
