@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Test the AI Caller</title>
+  <style>
+    body {
+      font-family: Arial;
+      background: #0f172a;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .box {
+      background: #1e293b;
+      padding: 40px;
+      border-radius: 10px;
+      width: 350px;
+      text-align: center;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      border-radius: 6px;
+      border: none;
+    }
+
+    button {
+      margin-top: 15px;
+      padding: 12px;
+      width: 100%;
+      background: #22c55e;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #16a34a;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="box">
+  <h2>Test Our AI Caller</h2>
+  <p>Enter your number and the AI will call you in a few seconds.</p>
+
+  <input id="name" placeholder="Your Name" />
+  <input id="phone" placeholder="Phone Number" />
+
+  <button onclick="startDemo()">Start Demo</button>
+
+  <p id="status"></p>
+</div>
+
+<script>
+async function startDemo() {
+
+const name = document.getElementById("name").value
+const phone = document.getElementById("phone").value
+
+document.getElementById("status").innerText = "Calling you now..."
+
+await fetch("https://goodfunding.app.n8n.cloud/webhook-test/59644c16-2a87-4e3e-9ed6-a0bb5823d6e2", {
+method: "POST",
+headers: { "Content-Type": "application/json" },
+body: JSON.stringify({
+name: name,
+phone: phone
+})
+})
+
+document.getElementById("status").innerText = "The AI should call you shortly."
+}
+</script>
+
+</body>
+</html>
