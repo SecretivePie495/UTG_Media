@@ -2,6 +2,7 @@
 <html>
 <head>
   <title>Test the AI Caller</title>
+
   <style>
     body {
       font-family: Arial;
@@ -45,6 +46,7 @@
       background: #16a34a;
     }
   </style>
+
 </head>
 
 <body>
@@ -62,36 +64,50 @@
 </div>
 
 <script>
+
 async function startDemo() {
 
-const name = document.getElementById("name").value
-let phone = document.getElementById("phone").value
+  const name = document.getElementById("name").value
+  let phone = document.getElementById("phone").value
 
-// remove anything that isn't a number
-phone = phone.replace(/\D/g, "")
+  // remove anything that isn't a number
+  phone = phone.replace(/\D/g, "")
 
-// make sure it's exactly 10 digits
-if(phone.length !== 10){
-  document.getElementById("status").innerText = "Please enter a valid 10 digit phone number."
-  return
+  // validate phone number
+  if(phone.length !== 10){
+    document.getElementById("status").innerText = "Please enter a valid 10 digit phone number."
+    return
+  }
+
+  // add country code
+  phone = "+1" + phone
+
+  document.getElementById("status").innerText = "Calling you now..."
+
+  await fetch("https://goodfunding.app.n8n.cloud/webhook-test/59644c16-2a87-4e3e-9ed6-a0bb5823d6e2", {
+
+    method: "POST",
+
+    headers: {
+      "Content-Type": "application/json"
+    },
+
+    body: JSON.stringify({
+      name: name,
+      phone: phone,
+
+      // identifiers so n8n can filter
+      source: "ai-caller-demo-page",
+      website: window.location.hostname,
+      timestamp: new Date().toISOString()
+    })
+
+  })
+
+  document.getElementById("status").innerText = "The AI should call you shortly."
+
 }
 
-// automatically add +1 country code
-phone = "+1" + phone
-
-document.getElementById("status").innerText = "Calling you now..."
-
-await fetch("https://goodfunding.app.n8n.cloud/webhook-test/59644c16-2a87-4e3e-9ed6-a0bb5823d6e2", {
-method: "POST",
-headers: { "Content-Type": "application/json" },
-body: JSON.stringify({
-name: name,
-phone: phone
-})
-})
-
-document.getElementById("status").innerText = "The AI should call you shortly."
-}
 </script>
 
 </body>
