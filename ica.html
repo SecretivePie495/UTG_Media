@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Retell Bot Test</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .box {
+      background: #1e293b;
+      padding: 40px;
+      border-radius: 10px;
+      width: 400px;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    }
+
+    h1 {
+      margin-bottom: 10px;
+    }
+
+    p {
+      color: #94a3b8;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="box">
+    <h1>Bot Test Page</h1>
+    <p>Your Retell chatbot should appear automatically.</p>
+    <p>If it doesn't show, check console errors.</p>
+  </div>
+
+  <script>
+    (function () {
+      const script = document.createElement("script");
+      script.id = "retell-widget";
+      script.src = "https://dashboard.retellai.com/retell-widget.js";
+      script.type = "module";
+
+      script.setAttribute("data-public-key", "public_key_17648bbaa99268d076798");
+      script.setAttribute("data-agent-id", "agent_ac419518cff8493e3f3cd7e466");
+      script.setAttribute("data-agent-version", "latest");
+      script.setAttribute("data-title", "Chat With Us");
+      script.setAttribute("data-logo-url", "https://ica-associates.ca/content/uploads/2023/03/logo.svg");
+      script.setAttribute("data-color", "#0b6cff");
+      script.setAttribute("data-bot-name", "ICA Assistant");
+      script.setAttribute("data-popup-message", "Hi! Need help with ICA training or certification?");
+      script.setAttribute("data-show-ai-popup", "true");
+      script.setAttribute("data-show-ai-popup-time", "5");
+      script.setAttribute("data-auto-open", "false");
+      script.setAttribute("data-dynamic", '{"source":"website"}');
+
+      document.body.appendChild(script);
+    })();
+  </script>
+
+</body>
+</html>
