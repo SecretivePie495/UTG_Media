@@ -21,382 +21,173 @@
     --display: 'Sora', sans-serif;
     --body: 'Manrope', sans-serif;
   }
-
   * { margin: 0; padding: 0; box-sizing: border-box; }
-
   body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--body);
-    line-height: 1.6;
-    -webkit-font-smoothing: antialiased;
-    overflow-x: hidden;
+    background: var(--bg); color: var(--text);
+    font-family: var(--body); line-height: 1.6;
+    -webkit-font-smoothing: antialiased; overflow-x: hidden;
   }
-
-  /* ambient background glow */
   body::before {
-    content: '';
-    position: fixed;
-    top: -20%;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 900px;
-    height: 600px;
+    content: ''; position: fixed; top: -20%; left: 50%;
+    transform: translateX(-50%); width: 900px; height: 600px;
     background: radial-gradient(ellipse at center, var(--accent-soft) 0%, transparent 70%);
-    pointer-events: none;
-    z-index: 0;
+    pointer-events: none; z-index: 0;
   }
+  .wrap { position: relative; z-index: 1; max-width: 1080px; margin: 0 auto; padding: 0 24px; }
 
-  .wrap {
-    position: relative;
-    z-index: 1;
-    max-width: 1080px;
-    margin: 0 auto;
-    padding: 0 24px;
-  }
-
-  /* ---------- HERO ---------- */
-  header {
-    padding: 80px 0 56px;
-    text-align: center;
-    animation: rise 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
-  }
-
+  header { padding: 80px 0 56px; text-align: center; animation: rise 0.8s cubic-bezier(0.16,1,0.3,1) both; }
   .badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 0.78rem;
-    font-weight: 600;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    color: var(--accent);
-    background: var(--accent-soft);
-    border: 1px solid rgba(255, 92, 53, 0.25);
-    padding: 7px 14px;
-    border-radius: 100px;
-    margin-bottom: 28px;
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 0.78rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase;
+    color: var(--accent); background: var(--accent-soft);
+    border: 1px solid rgba(255,92,53,0.25); padding: 7px 14px; border-radius: 100px; margin-bottom: 28px;
   }
-
-  .badge::before {
-    content: '';
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: var(--accent);
-    box-shadow: 0 0 8px var(--accent);
-  }
-
-  h1 {
-    font-family: var(--display);
-    font-weight: 800;
-    font-size: clamp(2.1rem, 5.5vw, 3.6rem);
-    line-height: 1.05;
-    letter-spacing: -0.02em;
-    margin-bottom: 20px;
-  }
-
+  .badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 8px var(--accent); }
+  h1 { font-family: var(--display); font-weight: 800; font-size: clamp(2.1rem,5.5vw,3.6rem); line-height: 1.05; letter-spacing: -0.02em; margin-bottom: 20px; }
   h1 .hl { color: var(--accent); }
-
-  .sub {
-    font-size: clamp(1rem, 2vw, 1.18rem);
-    color: var(--muted);
-    max-width: 600px;
-    margin: 0 auto 36px;
-  }
-
-  .cta-row {
-    display: flex;
-    gap: 14px;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-
+  .sub { font-size: clamp(1rem,2vw,1.18rem); color: var(--muted); max-width: 600px; margin: 0 auto 36px; }
+  .cta-row { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
   .btn {
-    font-family: var(--body);
-    font-weight: 600;
-    font-size: 1rem;
-    padding: 14px 28px;
-    border-radius: 100px;
-    text-decoration: none;
+    font-family: var(--body); font-weight: 600; font-size: 1rem; padding: 14px 28px;
+    border-radius: 100px; text-decoration: none; cursor: pointer; border: none;
+    display: inline-flex; align-items: center; gap: 9px;
     transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
-    cursor: pointer;
-    border: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 9px;
   }
-
-  .btn-primary {
-    background: var(--accent);
-    color: #fff;
-    box-shadow: 0 8px 28px rgba(255, 92, 53, 0.35);
-  }
-  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 34px rgba(255, 92, 53, 0.45); }
-
-  .btn-ghost {
-    background: var(--surface-2);
-    color: var(--text);
-    border: 1px solid var(--border);
-  }
+  .btn-primary { background: var(--accent); color: #fff; box-shadow: 0 8px 28px rgba(255,92,53,0.35); }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 34px rgba(255,92,53,0.45); }
+  .btn-ghost { background: var(--surface-2); color: var(--text); border: 1px solid var(--border); }
   .btn-ghost:hover { transform: translateY(-2px); background: #26262b; }
 
-  /* ---------- VIDEO GRID ---------- */
-  .videos {
-    padding: 24px 0 40px;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 28px;
-  }
-
-  @media (max-width: 720px) {
-    .videos { grid-template-columns: 1fr; }
-  }
+  .videos { padding: 24px 0 40px; display: grid; grid-template-columns: repeat(2,1fr); gap: 28px; }
+  @media (max-width: 720px) { .videos { grid-template-columns: 1fr; } }
 
   .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    overflow: hidden;
-    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease;
-    opacity: 0;
-    animation: rise 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    overflow: hidden; opacity: 0; animation: rise 0.7s cubic-bezier(0.16,1,0.3,1) forwards;
+    transition: transform 0.25s cubic-bezier(0.16,1,0.3,1), border-color 0.25s ease;
   }
-  .card:hover { transform: translateY(-4px); border-color: rgba(255, 92, 53, 0.4); }
-
-  .card:nth-child(1) { animation-delay: 0.1s; }
-  .card:nth-child(2) { animation-delay: 0.2s; }
-  .card:nth-child(3) { animation-delay: 0.3s; }
-  .card:nth-child(4) { animation-delay: 0.4s; }
-
-  .video-frame {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 16 / 9;
-    background: var(--surface-2);
-  }
-
-  .video-frame video {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-  }
-
-  /* placeholder shown when no src is set */
+  .card:hover { transform: translateY(-4px); border-color: rgba(255,92,53,0.4); }
+  .video-frame { position: relative; width: 100%; aspect-ratio: 16/9; background: var(--surface-2); }
+  .video-frame video { width: 100%; height: 100%; object-fit: cover; display: block; }
   .placeholder {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    color: var(--muted);
-    background:
-      repeating-linear-gradient(
-        45deg,
-        var(--surface-2),
-        var(--surface-2) 12px,
-        #202024 12px,
-        #202024 24px
-      );
-    font-size: 0.85rem;
-    letter-spacing: 0.02em;
+    position: absolute; inset: 0; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 10px; color: var(--muted);
+    background: repeating-linear-gradient(45deg, var(--surface-2), var(--surface-2) 12px, #202024 12px, #202024 24px);
+    font-size: 0.85rem; letter-spacing: 0.02em; text-align: center; padding: 0 16px;
   }
   .placeholder svg { opacity: 0.4; }
-
   .card-body { padding: 20px 22px 24px; }
-
   .card-tag {
-    display: inline-block;
-    font-size: 0.72rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--accent);
-    background: var(--accent-soft);
-    padding: 4px 10px;
-    border-radius: 6px;
-    margin-bottom: 12px;
+    display: inline-block; font-size: 0.72rem; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.05em; color: var(--accent); background: var(--accent-soft);
+    padding: 4px 10px; border-radius: 6px; margin-bottom: 12px;
   }
-
-  .card-title {
-    font-family: var(--display);
-    font-weight: 700;
-    font-size: 1.18rem;
-    margin-bottom: 6px;
-    letter-spacing: -0.01em;
-  }
-
+  .card-title { font-family: var(--display); font-weight: 700; font-size: 1.18rem; margin-bottom: 6px; letter-spacing: -0.01em; }
   .card-desc { color: var(--muted); font-size: 0.95rem; }
 
-  /* ---------- CLOSING CTA ---------- */
   .closer {
-    margin: 32px 0 80px;
+    margin: 32px 0 80px; border: 1px solid var(--border); border-radius: 24px; padding: 56px 40px;
+    text-align: center; position: relative; overflow: hidden;
     background: linear-gradient(135deg, var(--surface) 0%, var(--surface-2) 100%);
-    border: 1px solid var(--border);
-    border-radius: 24px;
-    padding: 56px 40px;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
   }
-  .closer::before {
-    content: '';
-    position: absolute;
-    top: -50%; right: -10%;
-    width: 400px; height: 400px;
-    background: radial-gradient(circle, var(--accent-soft) 0%, transparent 70%);
-    pointer-events: none;
-  }
+  .closer::before { content: ''; position: absolute; top: -50%; right: -10%; width: 400px; height: 400px; background: radial-gradient(circle, var(--accent-soft) 0%, transparent 70%); pointer-events: none; }
+  .closer h2 { font-family: var(--display); font-weight: 800; font-size: clamp(1.6rem,4vw,2.4rem); letter-spacing: -0.02em; margin-bottom: 14px; position: relative; }
+  .closer p { color: var(--muted); font-size: 1.08rem; max-width: 480px; margin: 0 auto 30px; position: relative; }
 
-  .closer h2 {
-    font-family: var(--display);
-    font-weight: 800;
-    font-size: clamp(1.6rem, 4vw, 2.4rem);
-    letter-spacing: -0.02em;
-    margin-bottom: 14px;
-    position: relative;
-  }
-  .closer p {
-    color: var(--muted);
-    font-size: 1.08rem;
-    max-width: 480px;
-    margin: 0 auto 30px;
-    position: relative;
-  }
+  footer { text-align: center; padding: 0 0 48px; color: var(--muted); font-size: 0.85rem; }
+  footer .brand { font-family: var(--display); font-weight: 700; color: var(--text); font-size: 1rem; letter-spacing: -0.01em; }
 
-  footer {
-    text-align: center;
-    padding: 0 0 48px;
-    color: var(--muted);
-    font-size: 0.85rem;
-  }
-  footer .brand {
-    font-family: var(--display);
-    font-weight: 700;
-    color: var(--text);
-    font-size: 1rem;
-    letter-spacing: -0.01em;
-  }
-
-  @keyframes rise {
-    from { opacity: 0; transform: translateY(24px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
+  @keyframes rise { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
 </style>
 </head>
 <body>
 <div class="wrap">
 
-  <!-- ================= HERO ================= -->
   <header>
     <span class="badge">Software Demo Videos</span>
     <h1>Demos that turn confused visitors into <span class="hl">signups.</span></h1>
-    <p class="sub">I make scene-by-scene software demo videos that show your product solving a real problem — clear, fast, and built to convert. Here's a look at recent work.</p>
+    <p class="sub">I make scene-by-scene software demo videos that show your product solving a real problem &mdash; clear, fast, and built to convert. Here's a look at recent work.</p>
     <div class="cta-row">
       <a href="#contact" class="btn btn-primary">Get a free sample &rarr;</a>
       <a href="#work" class="btn btn-ghost">See the work</a>
     </div>
   </header>
 
-  <!-- ================= VIDEO GRID ================= -->
-  <!--
-    HOW TO ADD YOUR VIDEOS:
-    1. In each <video> tag below, replace  src=""  with your direct MP4 link, e.g.
-         <source src="https://res.cloudinary.com/.../demo1.mp4" type="video/mp4">
-    2. Delete that card's <div class="placeholder">...</div> block once the src is filled.
-    3. Edit the tag, title, and description text under each video.
-    4. Duplicate a whole <article class="card"> block to add more videos.
-  -->
-  <section class="videos" id="work">
+  <section class="videos" id="work"></section>
 
-    <!-- VIDEO 1 -->
-    <article class="card">
-      <div class="video-frame">
-        <video controls preload="metadata" poster="">
-          <source src="" type="video/mp4">
-        </video>
-        <div class="placeholder">
-          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-          Video 1 — paste MP4 link in src
-        </div>
-      </div>
-      <div class="card-body">
-        <span class="card-tag">Demo Type</span>
-        <h3 class="card-title">Project / Software Name</h3>
-        <p class="card-desc">One line on what it does or the result it drove.</p>
-      </div>
-    </article>
-
-    <!-- VIDEO 2 -->
-    <article class="card">
-      <div class="video-frame">
-        <video controls preload="metadata" poster="">
-          <source src="" type="video/mp4">
-        </video>
-        <div class="placeholder">
-          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-          Video 2 — paste MP4 link in src
-        </div>
-      </div>
-      <div class="card-body">
-        <span class="card-tag">Demo Type</span>
-        <h3 class="card-title">Project / Software Name</h3>
-        <p class="card-desc">One line on what it does or the result it drove.</p>
-      </div>
-    </article>
-
-    <!-- VIDEO 3 -->
-    <article class="card">
-      <div class="video-frame">
-        <video controls preload="metadata" poster="">
-          <source src="" type="video/mp4">
-        </video>
-        <div class="placeholder">
-          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-          Video 3 — paste MP4 link in src
-        </div>
-      </div>
-      <div class="card-body">
-        <span class="card-tag">Demo Type</span>
-        <h3 class="card-title">Project / Software Name</h3>
-        <p class="card-desc">One line on what it does or the result it drove.</p>
-      </div>
-    </article>
-
-    <!-- VIDEO 4 -->
-    <article class="card">
-      <div class="video-frame">
-        <video controls preload="metadata" poster="">
-          <source src="" type="video/mp4">
-        </video>
-        <div class="placeholder">
-          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-          Video 4 — paste MP4 link in src
-        </div>
-      </div>
-      <div class="card-body">
-        <span class="card-tag">Demo Type</span>
-        <h3 class="card-title">Project / Software Name</h3>
-        <p class="card-desc">One line on what it does or the result it drove.</p>
-      </div>
-    </article>
-
-  </section>
-
-  <!-- ================= CLOSING CTA ================= -->
   <section class="closer" id="contact">
     <h2>Want one for your software?</h2>
-    <p>Tell me what your product does and I'll send you a free custom sample — no cost, no commitment.</p>
+    <p>Tell me what your product does and I'll send you a free custom sample &mdash; no cost, no commitment.</p>
     <a href="#" class="btn btn-primary">Message me &rarr;</a>
   </section>
 
   <footer>
     <div class="brand">UTG Labs</div>
-    Software demo videos · Dallas–Fort Worth
+    Software demo videos &middot; Dallas&ndash;Fort Worth
   </footer>
 
 </div>
+
+
+<!-- ====================================================================
+     >>>  THIS IS THE ONLY PART YOU EDIT  <<<
+
+     Add one block per video. Just fill in the 4 fields.
+     To add more videos: copy a { ... } block and paste it below the last.
+     To remove a video: delete its { ... } block.
+     Leave url as ""  and that card shows a placeholder.
+===================================================================== -->
+<script>
+const VIDEOS = [
+
+  {
+    url:   "https://storage.googleapis.com/software_templates/bazaar-export%20(1).mp4",                                                    // <-- paste MP4 link here
+    tag:   "Onboarding Demo",                                     // <-- short label
+    title: "Acme CRM",                                            // <-- software / project name
+    desc:  "Walkthrough that cut their support tickets in half."  // <-- one-line result
+  },
+
+  {
+    url:   "",
+    tag:   "Feature Demo",
+    title: "TaskFlow",
+    desc:  "Product launch walkthrough."
+  },
+
+  {
+    url:   "",
+    tag:   "Explainer",
+    title: "Project / Software Name",
+    desc:  "One line on what it does or the result it drove."
+  },
+
+  {
+    url:   "",
+    tag:   "Walkthrough",
+    title: "Project / Software Name",
+    desc:  "One line on what it does or the result it drove."
+  },
+
+];
+/* ===========  STOP EDITING HERE - the rest builds the page  =========== */
+
+const grid = document.querySelector('.videos');
+grid.innerHTML = VIDEOS.map((v, i) => {
+  const media = v.url
+    ? '<video controls preload="metadata"><source src="' + v.url + '" type="video/mp4"></video>'
+    : '<div class="placeholder">' +
+        '<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>' +
+        'Video ' + (i + 1) + ' &mdash; add a link in the list above' +
+      '</div>';
+  return '<article class="card" style="animation-delay:' + (0.1 * (i + 1)) + 's">' +
+           '<div class="video-frame">' + media + '</div>' +
+           '<div class="card-body">' +
+             '<span class="card-tag">' + v.tag + '</span>' +
+             '<h3 class="card-title">' + v.title + '</h3>' +
+             '<p class="card-desc">' + v.desc + '</p>' +
+           '</div>' +
+         '</article>';
+}).join('');
+</script>
 </body>
 </html>
