@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Best Dallas Golf | Premier LED Mini Golf Rentals</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700;800&amp;family=Inter:wght@400;600&amp;family=JetBrains+Mono:wght@600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@100..900&amp;family=Inter:wght@100..900&amp;family=JetBrains+Mono:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #050505;
+            color: #e2e2e2;
+            overflow-x: hidden;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.3s ease-in-out;
+        }
+        .glass-panel:hover {
+            border-color: #00dbe7;
+            box-shadow: 0 0 20px rgba(0, 219, 231, 0.2);
+        }
+        .neon-glow-primary {
+            box-shadow: 0 0 15px rgba(0, 219, 231, 0.4);
+        }
+        .neon-glow-secondary {
+            box-shadow: 0 0 15px rgba(121, 255, 91, 0.3);
+        }
+        .neon-text-glow {
+            text-shadow: 0 0 10px rgba(0, 219, 231, 0.6);
+        }
+        .timeline-wire {
+            position: relative;
+        }
+        .timeline-wire::after {
+            content: '';
+            position: absolute;
+            background: linear-gradient(to bottom, transparent, #00dbe7, transparent);
+            width: 2px;
+            height: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 0 10px #00dbe7;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "error": "#ffb4ab",
+                        "surface-tint": "#00dbe7",
+                        "primary-fixed-dim": "#00dbe7",
+                        "inverse-surface": "#e2e2e2",
+                        "tertiary-fixed": "#79ff5b",
+                        "primary-fixed": "#74f5ff",
+                        "tertiary-fixed-dim": "#2ae500",
+                        "surface-variant": "#333535",
+                        "on-secondary-fixed-variant": "#850074",
+                        "inverse-primary": "#00696f",
+                        "primary-container": "#00f2ff",
+                        "secondary": "#fface6",
+                        "on-error": "#690005",
+                        "surface-container-low": "#1a1c1c",
+                        "secondary-fixed-dim": "#fface6",
+                        "on-secondary-container": "#520048",
+                        "on-tertiary-container": "#106f00",
+                        "on-primary-container": "#006a71",
+                        "outline": "#849495",
+                        "primary": "#e1fdff",
+                        "outline-variant": "#3a494b",
+                        "on-background": "#e2e2e2",
+                        "secondary-container": "#ff27e1",
+                        "on-primary-fixed-variant": "#004f54",
+                        "surface-container-lowest": "#0c0f0f",
+                        "on-secondary-fixed": "#3a0032",
+                        "inverse-on-surface": "#2f3131",
+                        "background": "#121414",
+                        "surface-bright": "#38393a",
+                        "on-surface-variant": "#b9cacb",
+                        "on-secondary": "#5e0052",
+                        "surface-container-high": "#282a2b",
+                        "on-error-container": "#ffdad6",
+                        "surface-dim": "#121414",
+                        "error-container": "#93000a",
+                        "on-tertiary-fixed": "#022100",
+                        "surface": "#121414",
+                        "on-tertiary": "#053900",
+                        "on-primary": "#00363a",
+                        "surface-container-highest": "#333535",
+                        "on-surface": "#e2e2e2",
+                        "surface-container": "#1e2020",
+                        "on-primary-fixed": "#002022",
+                        "secondary-fixed": "#ffd7f0",
+                        "on-tertiary-fixed-variant": "#095300",
+                        "tertiary": "#e4ffd6",
+                        "tertiary-container": "#34fc0d"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-mobile": "20px",
+                        "container-max": "1440px",
+                        "unit": "8px",
+                        "gutter": "24px",
+                        "margin-desktop": "64px"
+                    },
+                    "fontFamily": {
+                        "display-lg": ["Hanken Grotesk"],
+                        "headline-lg-mobile": ["Hanken Grotesk"],
+                        "headline-lg": ["Hanken Grotesk"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "body-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-caps": ["JetBrains Mono"]
+                    },
+                    "fontSize": {
+                        "display-lg": ["72px", {"lineHeight": "80px", "letterSpacing": "-0.04em", "fontWeight": "800"}],
+                        "headline-lg-mobile": ["32px", {"lineHeight": "40px", "fontWeight": "700"}],
+                        "headline-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "headline-md": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.1em", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="font-body-md text-on-background bg-background">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-xl border-b border-white/10 shadow-[0_4px_30px_rgba(0,0,0,0.5)]">
+<div class="flex justify-between items-center px-margin-desktop py-4 max-w-container-max mx-auto">
+<div class="font-display-lg text-headline-md tracking-tighter text-primary-container drop-shadow-[0_0_10px_rgba(0,219,231,0.6)]">
+                BEST DALLAS GOLF
+            </div>
+<div class="hidden md:flex items-center gap-8 font-body-md text-body-md">
+<a class="text-on-surface-variant hover:text-primary transition-colors hover:bg-white/5 px-2 py-1 rounded" href="#courses">Courses</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors hover:bg-white/5 px-2 py-1 rounded" href="#events">Events</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors hover:bg-white/5 px-2 py-1 rounded" href="#equipment">Equipment</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors hover:bg-white/5 px-2 py-1 rounded" href="#service-area">Service Area</a>
+</div>
+<button class="active:scale-95 duration-200 bg-primary-container text-on-primary-container px-6 py-2 font-label-caps text-label-caps rounded-full font-bold neon-glow-primary">
+                GET QUOTE
+            </button>
+</div>
+</nav>
+<main class="mt-20">
+<!-- Hero Section -->
+<section class="relative h-[90vh] flex items-center overflow-hidden">
+<div class="absolute inset-0 z-0">
+<img alt="Background Hero" class="w-full h-full object-cover opacity-60 scale-110 blur-[2px]" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDhfKlm8xJ32VdFFwW0dRs8RJYiVXil2R0Kn0WxC4w8k71K4p1JXo_UwsJn31zMWjsRrBZzoX7apTJ-icMuhRiFSb3Bj1VL4IdvNHX0-WslhHDbYqO0AuNyW49OOXXRuI0FVvebXH7fxGKq4nfiyMy2ZycsAxAL8G__8ANxZ2nxU2V2VREJ7sLRoTGAjvyWhac0GbJGRjKS2pnVjcWH50fFOUA8H7cdgNqddpRoRUy1MRh0xyazHEUvSY7u6XhWJ3mtMg"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/50"></div>
+</div>
+<div class="relative z-10 px-margin-desktop max-w-container-max mx-auto w-full">
+<div class="max-w-3xl">
+<span class="font-label-caps text-label-caps text-primary-fixed-dim bg-primary-fixed-dim/10 px-3 py-1 rounded-full border border-primary-fixed-dim/20 mb-6 inline-block">
+                        LUXURY ENTERTAINMENT RENTALS
+                    </span>
+<h1 class="font-display-lg text-display-lg text-primary mb-6 leading-tight">
+                        Dallas's Premier <br/><span class="text-primary-container neon-text-glow">LED Mini Golf</span> Rental
+                    </h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-10 max-w-xl">
+                        Glow-in-the-dark mini golf delivered, set up, and ready for your event. Transform any space into a high-energy neon playground.
+                    </p>
+<div class="flex flex-wrap gap-4">
+<button class="bg-primary-container text-on-primary-container px-10 py-4 rounded-full font-label-caps text-label-caps font-bold neon-glow-primary hover:scale-105 transition-transform">
+                            Get a Free Quote
+                        </button>
+<button class="border border-primary-fixed-dim text-primary-fixed-dim px-10 py-4 rounded-full font-label-caps text-label-caps font-bold hover:bg-primary-fixed-dim/10 transition-colors">
+                            See It in Action
+                        </button>
+</div>
+</div>
+</div>
+</section>
+<!-- Social Proof Bar -->
+<section class="bg-surface-container-lowest py-8 border-y border-white/5">
+<div class="max-w-container-max mx-auto px-margin-desktop flex flex-wrap justify-center md:justify-between items-center gap-8">
+<div class="flex items-center gap-3 text-on-surface-variant">
+<span class="material-symbols-outlined text-primary-fixed-dim">verified_user</span>
+<span class="font-label-caps text-label-caps tracking-widest">FULLY INSURED</span>
+</div>
+<div class="flex items-center gap-3 text-on-surface-variant">
+<span class="material-symbols-outlined text-primary-fixed-dim">engineering</span>
+<span class="font-label-caps text-label-caps tracking-widest">SETUP &amp; TEARDOWN INCLUDED</span>
+</div>
+<div class="flex items-center gap-3 text-on-surface-variant">
+<span class="material-symbols-outlined text-primary-fixed-dim">location_on</span>
+<span class="font-label-caps text-label-caps tracking-widest">SERVING DFW AREA</span>
+</div>
+</div>
+</section>
+<!-- How It Works -->
+<section class="py-24 px-margin-desktop max-w-container-max mx-auto">
+<div class="text-center mb-16">
+<h2 class="font-headline-lg text-headline-lg text-primary mb-4">How It Works</h2>
+<div class="w-24 h-1 bg-primary-container mx-auto rounded-full"></div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<div class="glass-panel p-10 rounded-xl relative group">
+<div class="w-16 h-16 bg-primary-fixed-dim/20 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-primary-container text-4xl">request_quote</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-primary mb-4">1. Request a Quote</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Tell us about your event size, date, and location. We provide a customized package to fit your vision.</p>
+</div>
+<div class="glass-panel p-10 rounded-xl relative group">
+<div class="w-16 h-16 bg-tertiary-fixed-dim/20 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-tertiary-fixed-dim text-4xl">local_shipping</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-primary mb-4">2. We Deliver &amp; Set Up</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Our professional team handles the heavy lifting, setting up the LED courses for maximum glow impact.</p>
+</div>
+<div class="glass-panel p-10 rounded-xl relative group">
+<div class="w-16 h-16 bg-secondary-container/20 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-secondary text-4xl">celebration</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-primary mb-4">3. You Play, We Tear Down</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Focus on the fun. When the party's over, we return to disassemble and whisk the course away.</p>
+</div>
+</div>
+</section>
+<!-- Gallery -->
+<section class="py-24 bg-surface-container-lowest">
+<div class="max-w-container-max mx-auto px-margin-desktop">
+<div class="flex justify-between items-end mb-12">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-primary mb-2">The LED Experience</h2>
+<p class="text-on-surface-variant">Visual snapshots of our premium rentals in action.</p>
+</div>
+<button class="text-primary-fixed-dim font-label-caps text-label-caps hover:underline">VIEW FULL GALLERY</button>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 auto-rows-[250px]">
+<div class="col-span-2 row-span-2 relative overflow-hidden rounded-xl group">
+<img alt="LED Golf Course Large" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCnzIK5xLVUoPghOv7f-bH3uXtPqpsqpOxTKVZlvLIjZuZdxIuttQySY398_BixjbU2hyTXvODDaraY28qbLEM53uvKYCticpDLkHRyQr-CRTEcpcRO8_V-H7Ww2uL51uWDqcsitlligzf4dMzDvhOXwaWHaIoFyx1-KN4WEccUduIxtOzxk8jOzTFniCiB4S4h23Ilgb8og3m51WppIRmRjl6unQHYSFxHdr0eyKTMAiOxccdj7CYN6tQ3FyzbaJEMnw"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity p-6 flex flex-col justify-end">
+<span class="font-label-caps text-label-caps text-primary-container">PREMIUM SETUP</span>
+<h4 class="font-headline-md text-headline-md text-white">Full Event Course</h4>
+</div>
+</div>
+<div class="relative overflow-hidden rounded-xl group">
+<img alt="LED Golf Detail" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBhHt2uYUwp8d9u9J_xHoApUPE7Fg5gAHo4PUbl4bwItcDIiZoJIX6HsL1xQoMD79KiAj7AZy1lEUIewCdV5BbcOWV9Sgc6zNljKCAygUWtRLhvbltDChvlDm0XqEnsfahu6EwuzP-WnQMZAeasfnQCEZCfKplmcUkEq0FAN9s808a2XF8x6c0ExRo7Da7pkhc7KQpOeXJL35ShwhjeXR2CbxlZq5Z2m4FC9gFa_YBBkHdfEbChl_y-GnQGhZsAAe2sGw"/>
+</div>
+<div class="relative overflow-hidden rounded-xl group">
+<img alt="Night Event View" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA7y3Tnci13rWGm9cJj-idNLM_OI2o351Rzc5Rkt9YKbTUWOw8aJA5X_vLaCsJ8G34shBbe6xLjz9rQJ3c8ec0k8N-IWS0V7t8hJCfXV2gvTb9YttjYDZKcCEi-bFlCqlVmWJkFsADD4IpjjZHANfkh4SBxnV28SA_3i1_J0vMz40kvBf-sDPGEJNuiHQuqmRFX_6-kTG1ZdqhkTO1I0OmJC2KUuzNhrjpZxDrKAmKQm0xTtFQ2nxGg59O2MDUtMJJU5Q"/>
+</div>
+<div class="col-span-2 relative overflow-hidden rounded-xl group">
+<div class="absolute inset-0 bg-primary-container/20 z-10 pointer-events-none mix-blend-overlay"></div>
+<img alt="Neon Glow Atmosphere" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAsEeWHID1Bvvf5HeWa4mdOKtK2ekrS0MwBDzRQeq1pFGWy4iMmbjZn6jpIk1AqEH1lo0VEh9j7OcIBpXvJPamMpMR3J_poNNWhIHzLgd-ajR3DMeqgk7d5VMGrAZKa1R6laQjUMQxVS2bkrliPQrM9qVrEigWeK9S3EcIPbpsluZXb7Lmjr1iDMk0CH0FFAkd0xd57gGgVE0vsrwrh12zLLXxfk9eamuTXikC9hCJRGhy6HBCyAEl1XR1i8VfAJ7wtKQ"/>
+</div>
+</div>
+</div>
+</section>
+<!-- Perfect For -->
+<section class="py-24 px-margin-desktop max-w-container-max mx-auto">
+<div class="text-center mb-16">
+<h2 class="font-headline-lg text-headline-lg text-primary mb-4">Perfect For Every Event</h2>
+<p class="text-on-surface-variant">We bring the party to any venue, indoors or outdoors.</p>
+</div>
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-gutter">
+<div class="flex flex-col items-center p-8 glass-panel rounded-xl text-center">
+<span class="material-symbols-outlined text-primary-fixed-dim text-5xl mb-4">business_center</span>
+<h4 class="font-headline-md text-headline-md text-primary mb-2">Corporate</h4>
+<p class="text-on-surface-variant text-sm">Team building with a neon twist.</p>
+</div>
+<div class="flex flex-col items-center p-8 glass-panel rounded-xl text-center border-tertiary-fixed-dim/20">
+<span class="material-symbols-outlined text-tertiary-fixed-dim text-5xl mb-4">cake</span>
+<h4 class="font-headline-md text-headline-md text-primary mb-2">Birthdays</h4>
+<p class="text-on-surface-variant text-sm">A celebration they'll never forget.</p>
+</div>
+<div class="flex flex-col items-center p-8 glass-panel rounded-xl text-center">
+<span class="material-symbols-outlined text-secondary text-5xl mb-4">favorite</span>
+<h4 class="font-headline-md text-headline-md text-primary mb-2">Weddings</h4>
+<p class="text-on-surface-variant text-sm">Late-night interactive cocktail hour.</p>
+</div>
+<div class="flex flex-col items-center p-8 glass-panel rounded-xl text-center">
+<span class="material-symbols-outlined text-primary-container text-5xl mb-4">school</span>
+<h4 class="font-headline-md text-headline-md text-primary mb-2">Schools</h4>
+<p class="text-on-surface-variant text-sm">Safe, glowing fun for all students.</p>
+</div>
+</div>
+</section>
+<!-- Why Choose Us -->
+<section class="py-24 bg-surface-container-low overflow-hidden relative">
+<div class="absolute top-0 right-0 w-96 h-96 bg-primary-fixed-dim/10 blur-[150px] rounded-full"></div>
+<div class="max-w-container-max mx-auto px-margin-desktop relative z-10">
+<div class="mb-16">
+<h2 class="font-headline-lg text-headline-lg text-primary mb-4">Why Best Dallas Golf?</h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter">
+<div class="p-8 border border-white/5 bg-background/40 hover:border-primary-fixed-dim/50 transition-colors rounded-xl">
+<div class="text-primary-container font-headline-md text-headline-md mb-4">01</div>
+<h4 class="font-headline-md text-headline-md text-primary mb-3">Hassle-Free</h4>
+<p class="text-on-surface-variant">We manage the logistics from start to finish so you can host with ease.</p>
+</div>
+<div class="p-8 border border-white/5 bg-background/40 hover:border-tertiary-fixed-dim/50 transition-colors rounded-xl">
+<div class="text-tertiary-fixed-dim font-headline-md text-headline-md mb-4">02</div>
+<h4 class="font-headline-md text-headline-md text-primary mb-3">Unforgettable</h4>
+<p class="text-on-surface-variant">Create a "wow" factor with high-end LED lighting and modern aesthetics.</p>
+</div>
+<div class="p-8 border border-white/5 bg-background/40 hover:border-secondary-container/50 transition-colors rounded-xl">
+<div class="text-secondary font-headline-md text-headline-md mb-4">03</div>
+<h4 class="font-headline-md text-headline-md text-primary mb-3">Flexible</h4>
+<p class="text-on-surface-variant">Customized layouts to fit your specific venue size and guest count.</p>
+</div>
+<div class="p-8 border border-white/5 bg-background/40 hover:border-primary-fixed-dim/50 transition-colors rounded-xl">
+<div class="text-primary-fixed-dim font-headline-md text-headline-md mb-4">04</div>
+<h4 class="font-headline-md text-headline-md text-primary mb-3">Local</h4>
+<p class="text-on-surface-variant">Downtow Dallas based. We know the metroplex and are here to serve our community.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Lead Form -->
+<section class="py-24 px-margin-desktop max-w-container-max mx-auto" id="get-quote">
+<div class="glass-panel p-12 rounded-3xl grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-primary mb-6">Tell us about your event</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-8">
+                        Ready to glow? Fill out the form and our team will get back to you with a customized quote within 24 hours.
+                    </p>
+<div class="space-y-6">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full border border-primary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-primary-container">call</span>
+</div>
+<span class="text-primary">(214) 555-GLOW</span>
+</div>
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full border border-primary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-primary-container">mail</span>
+</div>
+<span class="text-primary">hello@bestdallasgolf.com</span>
+</div>
+</div>
+</div>
+<form class="space-y-6">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="space-y-2">
+<label class="font-label-caps text-label-caps text-on-surface-variant ml-1">NAME</label>
+<input class="w-full bg-black border-0 border-b border-white/20 focus:border-primary-container focus:ring-0 text-white p-3 transition-colors" placeholder="Your Name" type="text"/>
+</div>
+<div class="space-y-2">
+<label class="font-label-caps text-label-caps text-on-surface-variant ml-1">PHONE</label>
+<input class="w-full bg-black border-0 border-b border-white/20 focus:border-primary-container focus:ring-0 text-white p-3 transition-colors" placeholder="(000) 000-0000" type="tel"/>
+</div>
+</div>
+<div class="space-y-2">
+<label class="font-label-caps text-label-caps text-on-surface-variant ml-1">EMAIL</label>
+<input class="w-full bg-black border-0 border-b border-white/20 focus:border-primary-container focus:ring-0 text-white p-3 transition-colors" placeholder="email@address.com" type="email"/>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="space-y-2">
+<label class="font-label-caps text-label-caps text-on-surface-variant ml-1">EVENT DATE</label>
+<input class="w-full bg-black border-0 border-b border-white/20 focus:border-primary-container focus:ring-0 text-white p-3 transition-colors" type="date"/>
+</div>
+<div class="space-y-2">
+<label class="font-label-caps text-label-caps text-on-surface-variant ml-1">EVENT TYPE</label>
+<select class="w-full bg-black border-0 border-b border-white/20 focus:border-primary-container focus:ring-0 text-white p-3 transition-colors">
+<option>Corporate Event</option>
+<option>Birthday Party</option>
+<option>Wedding</option>
+<option>Other</option>
+</select>
+</div>
+</div>
+<button class="w-full bg-primary-container text-on-primary-container py-4 rounded-full font-label-caps text-label-caps font-bold neon-glow-primary hover:scale-[1.02] transition-transform mt-4">
+                        GET MY FREE QUOTE
+                    </button>
+</form>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-lowest w-full py-16 border-t border-white/5">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-gutter px-margin-desktop max-w-container-max mx-auto">
+<div class="col-span-1 md:col-span-1">
+<div class="font-display-lg text-headline-md text-primary mb-6">BEST DALLAS GOLF</div>
+<p class="font-body-md text-body-md text-on-surface-variant">Premier mobile mini-golf experience serving the greater Dallas-Fort Worth area with luxury LED rentals.</p>
+</div>
+<div class="flex flex-col gap-4">
+<h5 class="text-primary-fixed font-label-caps text-label-caps mb-2">QUICK LINKS</h5>
+<a class="text-on-surface-variant hover:text-tertiary-container transition-all duration-300" href="#">Contact Us</a>
+<a class="text-on-surface-variant hover:text-tertiary-container transition-all duration-300" href="#">Service Area</a>
+<a class="text-on-surface-variant hover:text-tertiary-container transition-all duration-300" href="#">Privacy Policy</a>
+<a class="text-on-surface-variant hover:text-tertiary-container transition-all duration-300" href="#">Rental Terms</a>
+</div>
+<div class="flex flex-col gap-4">
+<h5 class="text-primary-fixed font-label-caps text-label-caps mb-2">SOCIAL</h5>
+<div class="flex gap-4">
+<a class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center hover:border-primary-container transition-colors" href="#">
+<span class="material-symbols-outlined text-on-surface-variant hover:text-primary-container">share</span>
+</a>
+</div>
+</div>
+<div class="flex flex-col gap-4">
+<h5 class="text-primary-fixed font-label-caps text-label-caps mb-2">LOCATION</h5>
+<p class="text-on-surface-variant font-body-md">Serving Dallas, Fort Worth, Plano, Frisco, and surrounding areas.</p>
+</div>
+</div>
+<div class="px-margin-desktop max-w-container-max mx-auto mt-16 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center text-on-surface-variant font-body-md opacity-60">
+<p>© 2024 BEST DALLAS GOLF. ALL RIGHTS RESERVED.</p>
+<div class="flex gap-8 mt-4 md:mt-0">
+<span class="material-symbols-outlined text-tertiary-fixed-dim">verified</span>
+<span>Insured &amp; Bonded</span>
+</div>
+</div>
+</footer>
+<script>
+        // Smooth scroll for nav links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Simple intersection observer for reveal animations
+        const observerOptions = {
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('opacity-100');
+                    entry.target.classList.remove('opacity-0', 'translate-y-10');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.glass-panel').forEach(el => {
+            el.classList.add('opacity-0', 'translate-y-10', 'transition-all', 'duration-700');
+            observer.observe(el);
+        });
+    </script>
+</body></html>
