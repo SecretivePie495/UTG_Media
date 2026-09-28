@@ -1,3 +1,0 @@
-# Lead-flow app hosted on Netlify (utgmarketing staging site)
-/pl/assets/*  https://utgmarketing.netlify.app/assets/:splat  200
-/pl/*         https://utgmarketing.netlify.app/pl/:splat      200
